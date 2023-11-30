@@ -1,7 +1,7 @@
 import { StyleSheet, Image, PixelRatio } from "react-native";
 import React from "react";
 
-import logo from "../resources/logo/logo.png";
+import logo from "../resources/logo/sss.v1.png";
 
 const SignInHeaderLogo = () => {
   return <Image source={logo} style={styles.logo} />;

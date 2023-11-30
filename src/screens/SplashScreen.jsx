@@ -1,6 +1,6 @@
 import { StyleSheet, Image, View } from "react-native";
 
-import logo from "../resources/logo/logo.png";
+import logo from "../resources/logo/sss.v1.png";
 import car from "../resources/logo/splashcar.png";
 const SplashScreen = () => {
   return (
