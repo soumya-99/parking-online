@@ -1,9 +1,54 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView, StyleSheet, PixelRatio } from "react-native";
+import MainView from "../components/MainView";
+import CustomHeader from "../components/CustomHeader";
+import icons from "../resources/icons/icons";
+import ActionBox from "../components/ActionBox";
 
-export default function ReportScreen() {
+export default function ReportScreen({ navigation }) {
   return (
-    <View>
-      <Text>ReportScreen</Text>
-    </View>
+    <MainView>
+      <CustomHeader title="Reports" />
+      <ScrollView>
+        <View style={styles.report_container}>
+          <View style={styles.ActionBox_style}>
+            <ActionBox
+              title="Unbilled Reports"
+              onAction={() => navigation.navigate("Unbilled_Reports")}
+            />
+          </View>
+          <View style={styles.ActionBox_style}>
+            <ActionBox
+              title="Vehicle Wise Reports"
+              onAction={() => navigation.navigate("Vehicle_Wise_Reports")}
+            />
+          </View>
+          <View style={styles.ActionBox_style}>
+            <ActionBox
+              title="Operator Wise Reports"
+              onAction={() => navigation.navigate("Operator_Wise_Reports")}
+              icon={icons.users}
+            />
+          </View>
+        </View>
+      </ScrollView>
+    </MainView>
   );
 }
+
+const styles = StyleSheet.create({
+  report_container: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    padding: PixelRatio.roundToNearestPixel(10),
+  },
+  ActionBox_style: {
+    maxWidth: "48%",
+    maxHeight: "45%",
+    width: "48%",
+
+    paddingVertical: PixelRatio.roundToNearestPixel(10),
+  },
+});

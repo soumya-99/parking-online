@@ -6,6 +6,7 @@ import ReportScreen from "../screens/ReportScreen";
 import icons from "../resources/icons/icons";
 import SettingsScreen from "../screens/SettingsScreen";
 import OutpassScreen from "../screens/OutpassScreen";
+import ReportsNavigation from "./ReportsNavigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,12 +45,12 @@ function BottomNavigation() {
 
       {/* report genarate */}
       <Tab.Screen
-        name={reportScreen}
+        name="Reports_Navigation"
         options={{
           title: "Report",
           tabBarIcon: ({ color, size }) => icons.report(color, 30),
         }}
-        component={ReportScreen}
+        component={ReportsNavigation}
       />
 
       {/*Setting Screen */}
