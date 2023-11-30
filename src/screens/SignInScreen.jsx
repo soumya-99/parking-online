@@ -11,10 +11,10 @@ import styles from "../styles/styles";
 import { AuthContext } from "../context/AuthProvider";
 
 const SignInScreen = ({ navigation }) => {
-  const [text, onChangeText] = useState("");
-  const [password, onChangePassword] = useState("");
-  const [deviceId, setDeviceId] = useState("");
-  const { setIsLogin } = useContext(AuthContext);
+  const [username, setUsername] = useState(() => "");
+  const [password, setPassword] = useState(() => "");
+  const [deviceId, setDeviceId] = useState(() => "");
+  const { login } = useContext(AuthContext);
 
   useEffect(() => {
     const deviceId = DeviceInfo.getUniqueIdSync();
@@ -57,15 +57,15 @@ const SignInScreen = ({ navigation }) => {
           <InputCustom
             icon={icons.phone}
             placeholder="Mobile Number"
-            value={text}
-            onChangeText={onChangeText}
+            value={username}
+            onChangeText={setUsername}
             keyboardType="phone-pad"
           />
           <InputCustom
             icon={icons.unlock}
             placeholder={"Password"}
             value={password}
-            onChangeText={onChangePassword}
+            onChangeText={setPassword}
             keyboardType={"default"}
             secureTextEntry={true}
           />
@@ -73,10 +73,8 @@ const SignInScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.sign_in_button}
             onPress={() => {
-              // storeUser()
-              // login(text, password);
               console.log("Login...");
-              setIsLogin(true)
+              login(username, password)
             }}>
             {icons.arrowRight}
           </TouchableOpacity>
