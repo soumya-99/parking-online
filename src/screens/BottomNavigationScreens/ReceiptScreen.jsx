@@ -10,12 +10,12 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useRef, useState } from "react";
 
-import CustomHeader from "../components/CustomHeader";
-import styles from "../styles/styles";
-import colors from "../resources/colors/colors";
-import icons from "../resources/icons/icons";
-import { InternetStatusContext } from "../../App";
-import { AuthContext } from "../context/AuthProvider";
+import CustomHeader from "../../components/CustomHeader";
+import styles from "../../styles/styles";
+import colors from "../../resources/colors/colors";
+import icons from "../../resources/icons/icons";
+import { InternetStatusContext } from "../../../App";
+import { AuthContext } from "../../context/AuthProvider";
 
 export default function ReceiptScreen({ navigation }) {
   const [currentTime, setCurrentTime] = useState(new Date());

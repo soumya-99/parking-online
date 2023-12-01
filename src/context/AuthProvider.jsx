@@ -38,6 +38,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       try {
+        setLoading(true);
         await axios
           .post(ADDRESSES.LOGIN, credentials, {
             headers: {
@@ -67,6 +68,7 @@ export const AuthProvider = ({ children }) => {
           .catch(err => {
             console.log("Error occurred in server. ", err);
           });
+        setLoading(false);
       } catch (error) {
         console.log("Error login Try-Catch", error);
       }
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }) => {
       };
 
       try {
+        setLoading(true);
         await axios
           .post(ADDRESSES.LOGIN, credentials, {
             headers: {
@@ -102,6 +105,7 @@ export const AuthProvider = ({ children }) => {
           .catch(err => {
             console.log("ELSE Error occurred in server. ", err);
           });
+        setLoading(false);
       } catch (error) {
         console.log("ELSE Error login Try-Catch", error);
       }

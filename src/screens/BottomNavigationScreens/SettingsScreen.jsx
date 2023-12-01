@@ -8,12 +8,12 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React, { useContext } from "react";
-import CustomHeader from "../components/CustomHeader";
-import MainView from "../components/MainView";
-import ActionBox from "../components/ActionBox";
-import icons from "../resources/icons/icons";
-import colors from "../resources/colors/colors";
-import { AuthContext } from "../context/AuthProvider";
+import CustomHeader from "../../components/CustomHeader";
+import MainView from "../../components/MainView";
+import ActionBox from "../../components/ActionBox";
+import icons from "../../resources/icons/icons";
+import colors from "../../resources/colors/colors";
+import { AuthContext } from "../../context/AuthProvider";
 
 const height = Dimensions.get("window").height;
 

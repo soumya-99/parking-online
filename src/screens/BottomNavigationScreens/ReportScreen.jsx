@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, StyleSheet, PixelRatio } from "react-native";
-import MainView from "../components/MainView";
-import CustomHeader from "../components/CustomHeader";
-import icons from "../resources/icons/icons";
-import ActionBox from "../components/ActionBox";
+import MainView from "../../components/MainView";
+import CustomHeader from "../../components/CustomHeader";
+import icons from "../../resources/icons/icons";
+import ActionBox from "../../components/ActionBox";
 
 export default function ReportScreen({ navigation }) {
   return (

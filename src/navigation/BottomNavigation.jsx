@@ -2,10 +2,10 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import navigationRoutes from "../routes/navigationRoutes";
 import ReceiptNavigation from "./ReceiptNavigation";
-import ReportScreen from "../screens/ReportScreen";
+import ReportScreen from "../screens/BottomNavigationScreens/ReportScreen";
 import icons from "../resources/icons/icons";
-import SettingsScreen from "../screens/SettingsScreen";
-import OutpassScreen from "../screens/OutpassScreen";
+import SettingsScreen from "../screens/BottomNavigationScreens/SettingsScreen";
+import OutpassScreen from "../screens/BottomNavigationScreens/OutpassScreen";
 import ReportsNavigation from "./ReportsNavigation";
 
 const Tab = createBottomTabNavigator();

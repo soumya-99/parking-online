@@ -1,6 +1,6 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ReportScreen from "../screens/ReportScreen";
+import ReportScreen from "../screens/BottomNavigationScreens/ReportScreen";
 import navigationRoutes from "../routes/navigationRoutes";
 
 const Stack = createNativeStackNavigator();
