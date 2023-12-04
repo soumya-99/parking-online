@@ -6,18 +6,20 @@ import {
   Pressable,
   PixelRatio,
   ScrollView,
-  ActivityIndicator,
 } from "react-native";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import CustomHeader from "../../components/CustomHeader";
 import styles from "../../styles/styles";
 import colors from "../../resources/colors/colors";
 import icons from "../../resources/icons/icons";
-import { InternetStatusContext } from "../../../App";
-import { AuthContext } from "../../context/AuthProvider";
+import axios from "axios";
+import { ADDRESSES } from "../../routes/addresses";
+import { loginStorage } from "../../storage/appStorage";
 
 export default function ReceiptScreen({ navigation }) {
+
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const todayCollectionArray = [
@@ -27,16 +29,31 @@ export default function ReceiptScreen({ navigation }) {
     { title: "Total Collection", data: 650 || 0 },
   ];
 
-  const vechicles = [
-    {
-      vehicle_icon: "bike",
-      vehicle_name: "Bike",
-    },
-    {
-      vehicle_icon: "car",
-      vehicle_name: "Car",
-    },
-  ];
+  const [vehicles, setVehicles] = useState(() => []);
+
+  const getVehicles = async () => {
+    await axios
+      .post(
+        ADDRESSES.VEHICLES_LIST,
+        {},
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        setVehicles(res.data.data.msg);
+      })
+      .catch(err => {
+        console.log("ERRR - getVehicles", err);
+      });
+  };
+
+  useEffect(() => {
+    const vehicles = getVehicles();
+    return () => clearInterval(vehicles);
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -121,10 +138,10 @@ export default function ReceiptScreen({ navigation }) {
         </ScrollView>
       )} */}
       <ScrollView horizontal={true} style={otherStyle.vehicle_container}>
-        {vechicles &&
-          vechicles.map((props, index) => (
+        {vehicles &&
+          vehicles.map((props, index) => (
             <Pressable
-              key={index}
+              key={props.vehicle_id}
               style={otherStyle.vehicle}
               onPress={() => {
                 console.log("handleNavigation(props)");

@@ -11,104 +11,56 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(() => false);
 
   useEffect(() => {
-    const storageKeys = loginStorage.getAllKeys();
-    console.log("-------Effect-------", storageKeys);
-    if (storageKeys.length !== 0) {
-      const loginDataObjectFromStorage = loginStorage.getString("login-data");
-      const loginData = JSON.parse(loginDataObjectFromStorage);
-      const loginCredentialsLocal = loginStorage.getString("login-data-local");
-      const loginCredentialsLocalRaw = JSON.parse(loginCredentialsLocal);
-      console.log("EFFECT - username", loginCredentialsLocalRaw.user_id);
-      console.log("EFFECT - password", loginCredentialsLocalRaw.password);
-      const username = loginCredentialsLocalRaw.user_id;
-      const password = loginCredentialsLocalRaw.password;
-      const token = loginData.token;
-      login(username, password, token);
-    }
+    isLoggedIn();
   }, []);
 
-  const login = async (username, password, token = "") => {
-    const storageKeys = loginStorage.getAllKeys();
-    console.log("-------------", storageKeys);
+  const login = async (username, password) => {
+    const credentials = {
+      password: password,
+      user_id: username,
+    };
 
-    if (storageKeys.length === 0) {
-      const credentials = {
-        password: password,
-        user_id: username,
-      };
+    try {
+      setLoading(true);
+      await axios
+        .post(ADDRESSES.LOGIN, credentials, {
+          headers: {
+            Accept: "application/json",
+          },
+        })
+        .then(res => {
+          if (res.data.status) {
+            loginStorage.set("login-data-local", JSON.stringify(credentials));
+            loginStorage.set("login-data", JSON.stringify(res.data.data));
+            console.log("=====================", res.data.data);
+            setIsLogin(!isLogin);
+          } else {
+            ToastAndroid.showWithGravityAndOffset(
+              "Invalid Credentials",
+              3,
+              25,
+              25,
+              25,
+            );
+            console.log("Error login Axios");
+          }
+        })
+        .catch(err => {
+          console.log("Error occurred in server. ", err);
+        });
+      setLoading(false);
+    } catch (error) {
+      console.log("Error login Try-Catch", error);
+    }
+  };
 
-      try {
-        setLoading(true);
-        await axios
-          .post(ADDRESSES.LOGIN, credentials, {
-            headers: {
-              // Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          })
-          .then(res => {
-            if (res.data.status) {
-              loginStorage.set("login-data-local", JSON.stringify(credentials));
-              loginStorage.set("login-data", JSON.stringify(res.data.data));
-              console.log("=====================", res.data.data);
-              // loginStorage.set("token", JSON.stringify(res.data.data.token))
-              // loginStorage.set("userdata", JSON.stringify(res.data.data.user))
-              setIsLogin(!isLogin);
-            } else {
-              ToastAndroid.showWithGravityAndOffset(
-                "Invalid Credentials",
-                3,
-                25,
-                25,
-                25,
-              );
-              console.log("Error login Axios");
-            }
-          })
-          .catch(err => {
-            console.log("Error occurred in server. ", err);
-          });
-        setLoading(false);
-      } catch (error) {
-        console.log("Error login Try-Catch", error);
-      }
+  const isLoggedIn = () => {
+    if (loginStorage.getAllKeys().length === 0) {
+      console.log("IF - isLoggedIn");
+      setIsLogin(isLogin);
     } else {
-      const credentials = {
-        password: password,
-        user_id: username,
-      };
-
-      try {
-        setLoading(true);
-        await axios
-          .post(ADDRESSES.LOGIN, credentials, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              // Accept: "application/json",
-            },
-          })
-          .then(res => {
-            if (res.data.status) {
-              console.log("ELSE =====================", res.data.data);
-              setIsLogin(!isLogin);
-            } else {
-              ToastAndroid.showWithGravityAndOffset(
-                "Invalid Credentials",
-                3,
-                25,
-                25,
-                25,
-              );
-              console.log("ELSE Error login Axios");
-            }
-          })
-          .catch(err => {
-            console.log("ELSE Error occurred in server. ", err);
-          });
-        setLoading(false);
-      } catch (error) {
-        console.log("ELSE Error login Try-Catch", error);
-      }
+      console.log("ELSE - isLoggedIn");
+      setIsLogin(!isLogin);
     }
   };
 
