@@ -12,7 +12,8 @@ import SettingsNavigation from "./SettingsNavigation";
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
-  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } = navigationRoutes;
+  const { receiptScreen, outpassScreen, reportScreen, settingsScreen } =
+    navigationRoutes;
 
   return (
     <Tab.Navigator

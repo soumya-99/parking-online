@@ -8,9 +8,7 @@ import FontAwsome5 from "react-native-vector-icons/FontAwesome5";
 import colors from "../colors/colors";
 
 const phone = <Feather name="phone" size={20} color={colors["light-gray"]} />;
-const unlock = (
-  <Feather name="unlock" size={20} color={colors["light-gray"]} />
-);
+const unlock = <Feather name="unlock" size={20} color={colors["light-gray"]} />;
 
 const arrowRight = (
   <Feather name="arrow-right" size={30} color={colors["white"]} />
@@ -112,11 +110,7 @@ const truck = (
 );
 
 const calendar = (
-  <Ionicons
-    name="calendar-outline"
-    size={30}
-    color={colors["primary-color"]}
-  />
+  <Ionicons name="calendar-outline" size={30} color={colors["primary-color"]} />
 );
 
 const time = (
@@ -217,11 +211,7 @@ const book = (
 );
 
 const language = (
-  <MaterialIcons
-    name={"language"}
-    size={25}
-    color={colors["primary-color"]}
-  />
+  <MaterialIcons name={"language"} size={25} color={colors["primary-color"]} />
 );
 const deviceMode = (
   <MaterialIcons name={"devices"} size={25} color={colors["primary-color"]} />
@@ -246,11 +236,7 @@ const timeSand = (
 );
 
 const totalCollection = (
-  <MaterialIcons
-    name={"payments"}
-    size={25}
-    color={colors["primary-color"]}
-  />
+  <MaterialIcons name={"payments"} size={25} color={colors["primary-color"]} />
 );
 
 const archiveData = (
@@ -281,11 +267,7 @@ const backArrow = (
 );
 
 const flashOn = (
-  <MaterialCommunityIcons
-    name={"flashlight"}
-    size={25}
-    color={colors.white}
-  />
+  <MaterialCommunityIcons name={"flashlight"} size={25} color={colors.white} />
 );
 const flashOff = (
   <MaterialCommunityIcons

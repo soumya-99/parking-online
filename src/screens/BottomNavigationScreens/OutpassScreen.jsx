@@ -1,4 +1,11 @@
-import { View, Text, StyleSheet, Pressable, PixelRatio, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  PixelRatio,
+  ScrollView,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomHeader from "../../components/CustomHeader";
 import CustomButton from "../../components/CustomButton";

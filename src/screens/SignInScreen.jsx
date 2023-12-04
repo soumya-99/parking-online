@@ -75,7 +75,7 @@ const SignInScreen = ({ navigation }) => {
             style={styles.sign_in_button}
             onPress={() => {
               console.log("Login...");
-              login(username, password)
+              login(username, password);
             }}>
             {icons.arrowRight}
           </TouchableOpacity>
