@@ -13,11 +13,11 @@ import colors from "../../resources/colors/colors";
 import CustomSwitch from "../../components/CustomSwitch";
 import CustomInputComponent from "../../components/CustomInputComponent";
 import CustomDropdown from "../../components/CustomDropdown";
-import { AuthContext } from "../../Auth/AuthProvider";
 import CustomHeader from "../../components/CustomHeader";
 import axios from "axios";
 import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
+import { AuthContext } from "../../context/AuthProvider";
 const width = Dimensions.get("screen").width;
 
 const language = [
@@ -67,25 +67,54 @@ const SettingComponent = ({ icon, text, children, style }) => {
 };
 
 const GeneralSettingsScreen = ({ navigation }) => {
-  const [generalSettings, setGeneralSettings] = useState({
-    // setting_id: 9,
-    // app_id: "1324567890",
-    // customer_id: 12,
-    // mc_lang: "E",
-    // dev_mod: "F",
-    // report_flag: "Y",
-    // otp_val: "N",
-    // signIn_session: null,
-    // total_collection: "Y",
-    // vehicle_no: "Y",
-    // adv_pay: "",
-    // auto_archive: null,
-    // max_receipt: 500,
-    // reset_recipeit_no: "D",
-    // parking_entry_type: "S",
-    // created_at: "2023-10-16T11:27:23.000Z",
-    // updated_at: "2023-10-16T11:56:18.000Z",
-  });
+  // const [generalSettings, setGeneralSettings] = useState({
+  //   // setting_id: 9,
+  //   // app_id: "1324567890",
+  //   // customer_id: 12,
+  //   // mc_lang: "E",
+  //   // dev_mod: "F",
+  //   // report_flag: "Y",
+  //   // otp_val: "N",
+  //   // signIn_session: null,
+  //   // total_collection: "Y",
+  //   // vehicle_no: "Y",
+  //   // adv_pay: "",
+  //   // auto_archive: null,
+  //   // max_receipt: 500,
+  //   // reset_recipeit_no: "D",
+  //   // parking_entry_type: "S",
+  //   // created_at: "2023-10-16T11:27:23.000Z",
+  //   // updated_at: "2023-10-16T11:56:18.000Z",
+  // });
+
+  const { getGeneralSettings, generalSettings } = useContext(AuthContext);
+
+  // const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+  // const getGeneralSettings = async () => {
+  //   await axios
+  //     .post(
+  //       ADDRESSES.GENERAL_SETTINGS,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: loginData.token,
+  //         },
+  //       },
+  //     )
+  //     .then(res => {
+  //       setGeneralSettings(res.data.data.msg[0]);
+  //     })
+  //     .catch(err => {
+  //       console.log("CATCH - getGeneralSettings", err);
+  //     });
+  // };
+
+  useEffect(() => {
+    console.log("General Settings Called - GeneralSettingsScreen")
+    const generalSettings = getGeneralSettings();
+    return () => clearInterval(generalSettings);
+  }, []);
 
   const {
     adv_pay,
@@ -106,32 +135,6 @@ const GeneralSettingsScreen = ({ navigation }) => {
     updated_at,
     vehicle_no,
   } = generalSettings;
-
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
-
-  const getGeneralSettings = async () => {
-    await axios
-      .post(
-        ADDRESSES.GENERAL_SETTINGS,
-        {},
-        {
-          headers: {
-            Authorization: loginData.token,
-          },
-        },
-      )
-      .then(res => {
-        setGeneralSettings(res.data.data.msg[0]);
-      })
-      .catch(err => {
-        console.log("CATCH - getGeneralSettings", err);
-      });
-  };
-
-  useEffect(() => {
-    const generalSettings = getGeneralSettings();
-    return () => clearInterval(generalSettings);
-  }, []);
 
   return (
     <View style={{ flex: 1 }}>

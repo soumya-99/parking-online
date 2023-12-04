@@ -9,6 +9,25 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(() => false);
   const [loading, setLoading] = useState(() => false);
+  const [generalSettings, setGeneralSettings] = useState({
+    // setting_id: 9,
+    // app_id: "1324567890",
+    // customer_id: 12,
+    // mc_lang: "E",
+    // dev_mod: "F",
+    // report_flag: "Y",
+    // otp_val: "N",
+    // signIn_session: null,
+    // total_collection: "Y",
+    // vehicle_no: "Y",
+    // adv_pay: "",
+    // auto_archive: null,
+    // max_receipt: 500,
+    // reset_recipeit_no: "D",
+    // parking_entry_type: "S",
+    // created_at: "2023-10-16T11:27:23.000Z",
+    // updated_at: "2023-10-16T11:56:18.000Z",
+  });
 
   useEffect(() => {
     isLoggedIn();
@@ -64,6 +83,32 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+
+  const getGeneralSettings = async () => {
+    await axios
+      .post(
+        ADDRESSES.GENERAL_SETTINGS,
+        {},
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        setGeneralSettings(res.data.data.msg[0]);
+      })
+      .catch(err => {
+        console.log("CATCH - getGeneralSettings", err);
+      });
+  };
+
+  // useEffect(() => {
+  //   const generalSettings = getGeneralSettings();
+  //   return () => clearInterval(generalSettings);
+  // }, []);
+
   const logout = () => {
     setIsLogin(!isLogin);
     loginStorage.clearAll();
@@ -71,7 +116,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLogin, loading, login, logout }}>
+    <AuthContext.Provider value={{ isLogin, loading, login, logout, generalSettings, getGeneralSettings }}>
       {children}
     </AuthContext.Provider>
   );

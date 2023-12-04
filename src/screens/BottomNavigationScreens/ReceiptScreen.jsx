@@ -7,7 +7,7 @@ import {
   PixelRatio,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import CustomHeader from "../../components/CustomHeader";
 import styles from "../../styles/styles";
@@ -16,10 +16,13 @@ import icons from "../../resources/icons/icons";
 import axios from "axios";
 import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
+import { AuthContext } from "../../context/AuthProvider";
 
 export default function ReceiptScreen({ navigation }) {
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const { getGeneralSettings } = useContext(AuthContext);
 
   const todayCollectionArray = [
     { title: "Operator Name", data: "Soumyadeep" },
@@ -53,6 +56,68 @@ export default function ReceiptScreen({ navigation }) {
     const vehicles = getVehicles();
     return () => clearInterval(vehicles);
   }, []);
+
+  useEffect(() => {
+    console.log("General Settings Called - ReceiptScreen")
+    const generalSettings = getGeneralSettings();
+    return () => clearInterval(generalSettings);
+  }, []);
+
+  const handleNavigation = async props => {
+    // const result = await getVehicleRatesByVehicleId(props.vehicle_id);
+
+    // if (result.length == 0 && generalSetting?.dev_mod != 'F') {
+    //   ToastAndroid.showWithGravityAndOffset(
+    //     'Vehicle Rate Not available contact owner',
+    //     ToastAndroid.LONG,
+    //     ToastAndroid.CENTER,
+    //     25,
+    //     50,
+    //   );
+    //   return;
+    // }
+    // let advancePrice = false;
+    // if (generalSetting.adv_pay == 'Y' && generalSetting?.dev_mod != 'F') {
+    //   advancePrice = await getAdvancePricesByVehicleId(props.vehicle_id);
+    //   if (advancePrice.length == 0) {
+    //     ToastAndroid.showWithGravityAndOffset(
+    //       'Advance price Not available contact owner',
+    //       ToastAndroid.LONG,
+    //       ToastAndroid.CENTER,
+    //       25,
+    //       50,
+    //     );
+    //     return;
+    //   }
+    // }
+    // let fixedPrice = false;
+    // if (generalSetting?.dev_mod == 'F') {
+    //   fixedPrice = await getFixedPricesByVehicleId(props.vehicle_id);
+    //   // alert(JSON.stringify(fixedPrice))
+    //   if (fixedPrice.length == 0) {
+    //     ToastAndroid.showWithGravityAndOffset(
+    //       'Fixed price Not available contact owner',
+    //       ToastAndroid.LONG,
+    //       ToastAndroid.CENTER,
+    //       25,
+    //       50,
+    //     );
+    //     return;
+    //   }
+    // }
+
+    navigation.navigate("create_receipt", {
+      type: props.vehicle_name,
+      id: props.vehicle_id,
+      // userId: userDetails?.user_id,
+      // operatorName: userDetails?.name,
+      // receiptNo: receiptNo,
+      // currentDayTotalReceipt: totalVehicleIn,
+      // imei_no: userDetails?.imei_no,
+      // advanceData: advancePrice,
+      // fixedPriceData: fixedPrice,
+    });
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -144,6 +209,7 @@ export default function ReceiptScreen({ navigation }) {
               style={otherStyle.vehicle}
               onPress={() => {
                 console.log("handleNavigation(props)");
+                handleNavigation(props)
               }}>
               {icons.dynamicvechicleIcon(props.vehicle_icon)}
               <Text style={otherStyle.vehicle_name}>{props.vehicle_name}</Text>
