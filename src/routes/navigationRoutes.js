@@ -2,7 +2,7 @@ export default navigationRoutes = {
   receiptScreen: "ReceiptScreen",
   outpassScreen: "OutpassScreen",
   reportScreen: "ReportScreen",
-  settingsScreen: "SettingScreen",
+  settingsScreen: "SettingNavigation",
 
   login: "login",
   signup: "signup",

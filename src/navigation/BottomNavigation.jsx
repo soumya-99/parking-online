@@ -7,6 +7,7 @@ import icons from "../resources/icons/icons";
 import SettingsScreen from "../screens/BottomNavigationScreens/SettingsScreen";
 import OutpassScreen from "../screens/BottomNavigationScreens/OutpassScreen";
 import ReportsNavigation from "./ReportsNavigation";
+import SettingsNavigation from "./SettingsNavigation";
 
 const Tab = createBottomTabNavigator();
 
@@ -60,7 +61,7 @@ function BottomNavigation() {
           title: "Settings",
           tabBarIcon: ({ color, size }) => icons.setting(color, 30),
         }}
-        component={SettingsScreen}
+        component={SettingsNavigation}
       />
     </Tab.Navigator>
   );

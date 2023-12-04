@@ -17,7 +17,7 @@ import { AuthContext } from "../../context/AuthProvider";
 
 const height = Dimensions.get("window").height;
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   const { logout } = useContext(AuthContext);
 
   return (
@@ -30,7 +30,7 @@ export default function SettingsScreen() {
             <ActionBox
               title={"General Setting"}
               icon={icons.setting(colors["primary-color"], 50)}
-              onAction={() => navigation.navigate("general_setting")}
+              onAction={() => navigation.navigate("general_settings")}
             />
           </View>
 
