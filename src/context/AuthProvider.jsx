@@ -35,10 +35,11 @@ export const AuthProvider = ({ children }) => {
     isLoggedIn();
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (username, password, deviceId) => {
     const credentials = {
       password: password,
       user_id: username,
+      device_id: deviceId
     };
 
     try {
@@ -153,9 +154,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
-    setIsLogin(!isLogin);
     loginStorage.clearAll();
     appStorage.clearAll();
+    setIsLogin(!isLogin);
     console.log("LOGGING OUT...");
   };
 

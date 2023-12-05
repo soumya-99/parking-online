@@ -20,7 +20,6 @@ const SignInScreen = ({ navigation }) => {
   useEffect(() => {
     const deviceId = DeviceInfo.getUniqueIdSync();
     setDeviceId(deviceId);
-    // setDeviceId("gsjdadf")
   }, []);
 
   return (
@@ -75,7 +74,7 @@ const SignInScreen = ({ navigation }) => {
             style={styles.sign_in_button}
             onPress={() => {
               console.log("Login...");
-              login(username, password);
+              login(username, password, deviceId);
             }}>
             {icons.arrowRight}
           </TouchableOpacity>
