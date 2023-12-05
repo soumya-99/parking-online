@@ -2,7 +2,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { ToastAndroid } from "react-native";
 import axios from "axios";
 import { ADDRESSES } from "../routes/addresses";
-import { loginStorage } from "../storage/appStorage";
+import { appStorage, loginStorage } from "../storage/appStorage";
 
 export const AuthContext = createContext();
 
@@ -28,6 +28,8 @@ export const AuthProvider = ({ children }) => {
     // created_at: "2023-10-16T11:27:23.000Z",
     // updated_at: "2023-10-16T11:56:18.000Z",
   });
+  const [rateDetailsList, setRateDetailsList] = useState(() => []);
+  const [gstList, setGstList] = useState({});
 
   useEffect(() => {
     isLoggedIn();
@@ -83,9 +85,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
-
   const getGeneralSettings = async () => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
         ADDRESSES.GENERAL_SETTINGS,
@@ -98,25 +99,80 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGeneralSettings(res.data.data.msg[0]);
+        // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
       })
       .catch(err => {
         console.log("CATCH - getGeneralSettings", err);
       });
   };
 
-  // useEffect(() => {
-  //   const generalSettings = getGeneralSettings();
-  //   return () => clearInterval(generalSettings);
-  // }, []);
+  const getRateDetailsList = async () => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.RATE_DETAILS_LIST,
+        { dev_mod: generalSettings.dev_mod },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        setRateDetailsList(res.data.data.msg);
+      })
+      .catch(err => {
+        console.log("ERR - getRateDetailsList - AuthProvider", err);
+      });
+  };
+
+  const getGstList = async () => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.GST_LIST,
+        {},
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        setGstList(res.data.data.msg[0]);
+      })
+      .catch(err => {
+        console.log("ERR - getGstList - AuthProvider", err);
+      });
+  };
+
+  useEffect(() => {
+    console.log("getGeneralSettings, getGstList Called - AuthProvider");
+    getGeneralSettings();
+    getGstList();
+  }, []);
 
   const logout = () => {
     setIsLogin(!isLogin);
     loginStorage.clearAll();
+    appStorage.clearAll();
     console.log("LOGGING OUT...");
   };
 
   return (
-    <AuthContext.Provider value={{ isLogin, loading, login, logout, generalSettings, getGeneralSettings }}>
+    <AuthContext.Provider
+      value={{
+        isLogin,
+        loading,
+        login,
+        logout,
+        generalSettings,
+        getGeneralSettings,
+        rateDetailsList,
+        getRateDetailsList,
+        gstList,
+        getGstList,
+      }}>
       {children}
     </AuthContext.Provider>
   );

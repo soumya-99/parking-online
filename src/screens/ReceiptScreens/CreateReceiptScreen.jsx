@@ -19,6 +19,7 @@ import CustomButton from "../../components/CustomButton";
 import { InternetStatusContext } from "../../../App";
 import BleManager from "react-native-ble-manager";
 import { AuthContext } from "../../context/AuthProvider";
+import gstPriceCalculator from "../../utils/gstPriceCalculator";
 
 const CreateReceiptScreen = ({ navigation, route }) => {
   // check is Internet available or not
@@ -29,27 +30,9 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const [pic, setPic] = useState();
 
   // get general settings from authcontext provider
-  const { generalSettings } = useContext(AuthContext);
+  const { generalSettings, getRateDetailsList } = useContext(AuthContext);
 
-  // GET GST SETTINGS
-  //   const { handleGetGstSettingsFromStorage } = gstSettingsController();
-
-  //Destructuring dev_mod, max_receipt, and adv_pay from generalSetting.
   const { dev_mod, max_receipt, adv_pay } = generalSettings;
-
-  // hooks that handle  vehicle rates by vehicleID
-  //   const { getVehicleRatesByVehicleId } = vehicleRatesStorage();
-  // hooks that  handle vehicle rates by vehicleID
-  //   const { getAdvancePricesByVehicleId } = advancePriceStorage();
-
-  // function handle offline storage
-  //   const { createVehicleInOut, createOrUpdateVehicleInOut } = VehicleInOutStore();
-
-  // this state store RECEIPT SETTINGS
-  //   const { receiptSettings } = getReceiptSettings();
-
-  // hooks handle to get the LOGO from local storage
-  //   const { getReceiptImage } = ReceiptImageStorage();
 
   // vehicleNumber input controller
   const [vehicleNumber, setVehicleNumber] = useState("");
@@ -75,149 +58,282 @@ const CreateReceiptScreen = ({ navigation, route }) => {
   const {
     type,
     id,
-    //   userId,
-    //   operatorName,
-    //   currentDayTotalReceipt,
-    //   imei_no,
-    //   advanceData,
-    //   fixedPriceData,
+    userId,
+    operatorName,
+    currentDayTotalReceipt,
+    imei_no,
+    advanceData,
+    fixedPriceData,
   } = route.params;
-
-  //   const [isBlueToothEnable, setIsBlueToothEnable] = useState(false);
-  //   // function to check isBlueToothEnable?
-  //   async function checkBluetoothEnabled() {
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-  //         {
-  //           title: "Bluetooth Permission",
-  //           message:
-  //             "This app needs access to your location to check Bluetooth status.",
-  //           buttonNeutral: "Ask Me Later",
-  //           buttonNegative: "Cancel",
-  //           buttonPositive: "OK",
-  //         },
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         // Permission granted, check Bluetooth status
-  //         BleManager.enableBluetooth()
-  //           .then(() => {
-  //             // Success code
-  //             setIsBlueToothEnable(true);
-  //             console.log("The bluetooth is already enabled or the user confirm");
-  //           })
-  //           .catch(error => {
-  //             // Failure code
-  //             console.log("The user refuse to enable bluetooth");
-  //           });
-  //         // const isEnabled = await BluetoothStatus.isEnabled();
-  //         // console.log('Bluetooth Enabled:', isEnabled);
-  //       } else {
-  //         // if bluetooth is not enabled call this functions it`s self.
-  //         checkBluetoothEnabled();
-  //         console.log("Bluetooth permission denied");
-  //       }
-  //     } catch (error) {
-  //       console.log("Error checking Bluetooth status:", error);
-  //     }
-  //   }
-
-  //   // check READ_PHONE_STATE available or not
-  //   const isPermitted = async () => {
-  //     console.log("/*/*/*/*/*/*/*/*/*/*/*/*/");
-  //     try {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-  //         {
-  //           title: "Phone state access Permission",
-  //           message: "to access your machine imei",
-  //           buttonNeutral: "Ask Me Later",
-  //           buttonNegative: "Cancel",
-  //           buttonPositive: "OK",
-  //         },
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         setREAD_PHONE_STATE(true);
-  //         // console.log('You can use this');
-  //       } else {
-  //         setREAD_PHONE_STATE(false);
-  //         // console.log('permission denied');
-  //       }
-  //     } catch (error) {
-  //       console.error(error.message);
-  //     }
-  //   };
 
   // reinitiate the current time and date
   useEffect(() => {
     console.log("EFFECT - CreateReceiptScren");
-    // checkBluetoothEnabled();
-    // isPermitted();
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
     return () => clearInterval(timer);
   }, []);
 
-  // // main fun() for all upload and store and printing
-  // const handleCreateReceipt = async () => {
-  //   // preventing the continuos button click
+  useEffect(() => {
+    console.log("getRateDetailsList called - CreateReceiptScreen");
+    getRateDetailsList();
+  }, []);
 
-  //   if (loading == true) {
-  //     return;
-  //   }
-  //   setLoading(true);
-  //   // if vehicleNumber is blank then return from the below block
-  //   if (!vehicleNumber) {
-  //     setLoading(false);
-  //     return ToastAndroid.showWithGravity(
-  //       'plase add the vehicle number to continue',
-  //       ToastAndroid.SHORT,
-  //       ToastAndroid.CENTER,
-  //     );
-  //   }
+  const handleCreateReceipt = async () => {
+    // preventing the continuos button click
 
-  //   if (adv_pay == 'Y' && dev_mod != 'F') {
-  //     // if adv_pay is equal to Y then  below function will work
-  //     // Y =  Yes , N = No
-  //     await handelAdvanceOfflineCarIN();
-  //   }
+    if (loading == true) {
+      return;
+    }
+    setLoading(true);
+    // if vehicleNumber is blank then return from the below block
+    if (!vehicleNumber) {
+      setLoading(false);
+      return ToastAndroid.showWithGravity(
+        "plase add the vehicle number to continue",
+        ToastAndroid.SHORT,
+        ToastAndroid.CENTER,
+      );
+    }
 
-  //   if (adv_pay != 'Y' || dev_mod == 'F') {
-  //     // if adv_pay is Not equal to Y then  below function will work
-  //     // Y =  Yes , N = No
-  //     if (dev_mod == 'F') {
-  //       await handelFixedModCarIN();
-  //     } else {
-  //       await handelOfflineCarIN();
-  //     }
-  //   }
-  //   setLoading(false);
-  //   setVehicleNumber();
+    // if (adv_pay == "Y" && dev_mod != "F") {
+    //   // if adv_pay is equal to Y then  below function will work
+    //   // Y =  Yes , N = No
+    //   await handelAdvanceOfflineCarIN();
+    // } // Commented In New Online...
 
-  //   // navigate to previous screen
-  //   navigation.navigate('Receipt');
-  // };
+    const handelFixedModCarIN = async () => {
+      // if bluetooth not enabled then return fro here
+      // if (!isBlueToothEnable) {
+      //   ToastAndroid.show(
+      //     'please enable the bluetooth first',
+      //     ToastAndroid.SHORT,
+      //   );
+      //   return;
+      // } // Commented In New Online...
 
-  //   useEffect(() => {
-  //     // Get the offline stored Image
+      // receiptNo holds the return value of currentReceiptNo
+      const receiptNo = await currentReceiptNo();
+      // mc_srl_no holds serial number
+      // const mc_srl_no = DeviceInfo.getSerialNumberSync();
+      const gstSettings = await handleGetGstSettingsFromStorage();
+      let isGst = "N";
 
-  //     getReceiptImage()
-  //       .then(response => {
-  //         // Store at pic State
-  //         setPic(response.image);
-  //       })
-  //       .catch(error => {
-  //         setPic(null);
-  //         console.error(error);
-  //       });
-  //   }, []);
+      let gstPrice = {
+        price: 0,
+        CGST: 0,
+        SGST: 0,
+        totalPrice: fixedPriceData?.[0].vehicle_rate,
+      };
+      if (gstSettings && gstSettings?.gst_flag == "1") {
+        gstPrice = gstPriceCalculator(
+          gstSettings,
+          fixedPriceData?.[0].vehicle_rate,
+        );
+        isGst = "Y";
+      }
+
+      try {
+        // if READ_PHONE_STATE is not available then request for permission.
+        if (!READ_PHONE_STATE) {
+          Alert.alert(
+            "Phone State Permission",
+            "You have to give us the phone state permission to continue",
+            [
+              {
+                text: "Cancel",
+                style: "cancel",
+              },
+
+              { text: "OK", onPress: isPermitted },
+            ],
+          );
+          return;
+        }
+
+        //store new vehicle data using createVehicleInOut()
+        //increaseReceiptNo by 1
+        // generate print using  handlePrintReceipt()
+        // await Promise.all([
+        //   createOrUpdateVehicleInOut(
+        //     receiptNo,
+        //     type,
+        //     id,
+        //     'S',
+        //     vehicleNumber.toUpperCase(),
+        //     currentTime.toISOString().slice(0, -5) + 'Z',
+        //     dev_mod,
+        //     operatorName,
+        //     userId,
+        //     imei_no,
+        //     null,
+        //     null,
+        //     gstPrice.totalPrice,
+        //     isGst,
+        //     null,
+        //     null,
+        //     0,
+        //     false,
+        //     false,
+        //     gstPrice.price,
+        //     gstPrice.CGST,
+        //     gstPrice.SGST,
+        //   ),
+        //   increaseReceiptNo(receiptNo),
+        //   handleFixedModePrintReceipt(
+        //     receiptNo,
+        //     isGst,
+        //     gstPrice.totalPrice,
+        //     gstPrice.CGST,
+        //     gstPrice.SGST,
+        //     gstPrice.price,
+        //   ),
+        // ]); // Commented In New Online...
+
+        // if  online run below block
+        if (isOnline) {
+          // init InData with important values
+          // which are mandatory for uploading data to the server
+          const InData = [
+            {
+              receiptNo: receiptNo,
+              date_time_in: currentTime.toISOString(),
+              oprn_mode: dev_mod,
+              vehicle_id: id,
+              vehicle_no: vehicleNumber.toUpperCase(),
+              receipt_type: "S",
+              mc_srl_no: imei_no,
+              gst_flag: isGst,
+              cgst: gstPrice.CGST,
+              sgst: gstPrice.SGST,
+              base_amt: gstPrice.price,
+              paid_amt: gstPrice.totalPrice,
+            },
+          ];
+
+          // store handleVehicleIn() return values in response
+          const response = await handleVehicleIn(InData);
+          console.log(
+            "___________________ subham Da ___________________",
+            InData,
+          );
+
+          if (response.status === 200) {
+            // if status  equal to 200 run below block
+            await Promise.all([
+              createOrUpdateVehicleInOut(
+                receiptNo,
+                type,
+                id,
+                "S",
+                vehicleNumber.toUpperCase(),
+                currentTime.toISOString(),
+                dev_mod,
+                operatorName,
+                userId,
+                imei_no,
+                null,
+                null,
+                gstPrice.totalPrice,
+                isGst,
+                null,
+                null,
+                0,
+                false,
+                false,
+                gstPrice.price,
+                gstPrice.CGST,
+                gstPrice.SGST,
+              ),
+              increaseReceiptNo(receiptNo),
+              handleFixedModePrintReceipt(
+                receiptNo,
+                isGst,
+                gstPrice.totalPrice,
+                gstPrice.CGST,
+                gstPrice.SGST,
+                gstPrice.price,
+              ),
+            ]);
+
+            ToastAndroid.showWithGravity(
+              "Uploaded",
+              ToastAndroid.LONG,
+              ToastAndroid.CENTER,
+            );
+          } else {
+            // if status not equal to 200 run below block
+            await Promise.all([
+              createOrUpdateVehicleInOut(
+                receiptNo,
+                type,
+                id,
+                "S",
+                vehicleNumber.toUpperCase(),
+                currentTime.toISOString(),
+                dev_mod,
+                operatorName,
+                userId,
+                imei_no,
+                null,
+                null,
+                gstPrice.totalPrice,
+                isGst,
+                null,
+                null,
+                0,
+                false,
+                false,
+                gstPrice.price,
+                gstPrice.CGST,
+                gstPrice.SGST,
+              ),
+              increaseReceiptNo(receiptNo),
+              handleFixedModePrintReceipt(
+                receiptNo,
+                isGst,
+                gstPrice.totalPrice,
+                gstPrice.CGST,
+                gstPrice.SGST,
+                gstPrice.price,
+              ),
+            ]);
+          }
+
+          //  and return from here no internet connectivity
+          return;
+        }
+
+        //  if you wonder why we are call createOrUpdateVehicleInOut() for status 200 and not equal 200
+        //Although createOrUpdateVehicleInOut () requires a lot of arguments, there is a call for isUploadedIn that can be either true or false.
+        // this help us in future to upload data to the server. which are not uploaded due to no internet connectivity.
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    if (adv_pay != "Y" || dev_mod == "F") {
+      // if adv_pay is Not equal to Y then  below function will work
+      // Y =  Yes , N = No
+      if (dev_mod == "F") {
+        await handelFixedModCarIN();
+      } else {
+        await handelOfflineCarIN();
+      }
+    }
+    setLoading(false);
+    setVehicleNumber();
+
+    // navigate to previous screen
+    navigation.navigate("ReceiptScreen");
+  };
 
   return (
     <View>
       {/* if loading state is true render loading */}
 
-      {/* {loading && (
+      {loading && (
         <View
           style={{
             position: "absolute",
@@ -230,7 +346,7 @@ const CreateReceiptScreen = ({ navigation, route }) => {
           <ActivityIndicator size="large" />
           <Text>Loading...</Text>
         </View>
-      )} */}
+      )}
 
       <ScrollView keyboardShouldPersistTaps={"handled"}>
         {/* render custom header */}

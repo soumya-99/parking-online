@@ -39,7 +39,7 @@ export default function SettingsScreen({ navigation }) {
             <ActionBox
               title={"Change Password"}
               icon={icons.chnagePassword}
-              onAction={() => navigation.navigate("change_password")}
+              onAction={() => navigation.navigate("chnage_password")}
             />
           </View>
           {/* User Details */}

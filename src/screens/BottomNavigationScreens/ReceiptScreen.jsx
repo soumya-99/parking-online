@@ -22,7 +22,7 @@ export default function ReceiptScreen({ navigation }) {
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const { getGeneralSettings } = useContext(AuthContext);
+  const { getGeneralSettings, getRateDetailsList, getGstList } = useContext(AuthContext);
 
   const todayCollectionArray = [
     { title: "Operator Name", data: "Soumyadeep" },
@@ -53,15 +53,9 @@ export default function ReceiptScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const vehicles = getVehicles();
-    return () => clearInterval(vehicles);
+    getVehicles();
   }, []);
 
-  useEffect(() => {
-    console.log("General Settings Called - ReceiptScreen")
-    const generalSettings = getGeneralSettings();
-    return () => clearInterval(generalSettings);
-  }, []);
 
   const handleNavigation = async props => {
     // const result = await getVehicleRatesByVehicleId(props.vehicle_id);
@@ -209,7 +203,7 @@ export default function ReceiptScreen({ navigation }) {
               style={otherStyle.vehicle}
               onPress={() => {
                 console.log("handleNavigation(props)");
-                handleNavigation(props)
+                handleNavigation(props);
               }}>
               {icons.dynamicvechicleIcon(props.vehicle_icon)}
               <Text style={otherStyle.vehicle_name}>{props.vehicle_name}</Text>
