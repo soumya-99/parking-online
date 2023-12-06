@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import navigationRoutes from "../routes/navigationRoutes";
 import ReceiptNavigation from "./ReceiptNavigation";
@@ -8,12 +8,16 @@ import SettingsScreen from "../screens/BottomNavigationScreens/SettingsScreen";
 import OutpassScreen from "../screens/BottomNavigationScreens/OutpassScreen";
 import ReportsNavigation from "./ReportsNavigation";
 import SettingsNavigation from "./SettingsNavigation";
+import { AuthContext } from "../context/AuthProvider";
 
 const Tab = createBottomTabNavigator();
 
 function BottomNavigation() {
   const { receiptScreen, outpassScreen, reportScreen, settingsScreen } =
     navigationRoutes;
+
+  const { generalSettings } = useContext(AuthContext);
+  const { dev_mod } = generalSettings;
 
   return (
     <Tab.Navigator
@@ -36,14 +40,16 @@ function BottomNavigation() {
       }
 
       {/* Out pass bill */}
-      <Tab.Screen
-        name={outpassScreen}
-        options={{
-          title: "Outpass",
-          tabBarIcon: ({ color, size }) => icons.setting(color, 30),
-        }}
-        component={OutpassScreen}
-      />
+      {dev_mod != "R" && dev_mod != "F" && (
+        <Tab.Screen
+          name={outpassScreen}
+          options={{
+            title: "Outpass",
+            tabBarIcon: ({ color, size }) => icons.setting(color, 30),
+          }}
+          component={OutpassScreen}
+        />
+      )}
 
       {/* report genarate */}
       <Tab.Screen
