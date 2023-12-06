@@ -4,23 +4,12 @@ import normalize from "react-native-normalize";
 import colors from "../resources/colors/colors";
 import { responsiveFontSize } from "react-native-responsive-dimensions";
 import icons from "../resources/icons/icons";
+import { loginStorage } from "../storage/appStorage";
 
 const CustomHeader = ({ title, navigation }) => {
-  const [userDetails, setUserDetails] = useState();
-
-  // useEffect(() => {
-  //     // Fetch user details on component mount
-  //     // retriveAuthUser() return a Token.
-  //     // getUserByToken() needs a token as an argument.
-  //     //After Fetching user Details  Successfully- store using setUserDetails.
-  //     retrieveAuthUser()
-  //         .then(token => {
-  //             getUserByToken(token)
-  //                 .then(res => setUserDetails(res))
-  //                 .catch(err => console.error(err));
-  //         })
-  //         .catch(err => console.error(err));
-  // }, [])
+  // const [userDetails, setUserDetails] = useState();
+  const loginData = JSON.parse(loginStorage.getString("login-data"));
+  const userDetails = loginData.user.userdata.msg[0];
 
   return (
     <View style={styles.container}>
@@ -43,11 +32,11 @@ const CustomHeader = ({ title, navigation }) => {
           {title}
         </Text>
         {/* company name  */}
-        <Text style={styles.company_name}>{userDetails?.companyname}</Text>
+        <Text style={styles.company_name}>{userDetails?.seller_name}</Text>
       </View>
       <View style={styles.header_container_two}>
         {/* city name / Place Name */}
-        <Text style={styles.city_name}>{userDetails?.location}</Text>
+        <Text style={styles.city_name}>{userDetails?.seller_addr}</Text>
       </View>
     </View>
   );

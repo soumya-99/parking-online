@@ -22,10 +22,16 @@ export default function ReceiptScreen({ navigation }) {
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const { getGeneralSettings, getRateDetailsList, getGstList } = useContext(AuthContext);
+  const userDetails = loginData.user.userdata.msg[0];
+
+  // console.log("ReceiptScreen - userDetails", userDetails)
+
+  const { generalSettings, getRateDetailsList, getGstList } = useContext(AuthContext);
+
+  const {dev_mod} = generalSettings;
 
   const todayCollectionArray = [
-    { title: "Operator Name", data: "Soumyadeep" },
+    { title: "Operator Name", data: userDetails.operator_name },
     { title: "Total Vehicles In", data: 10 },
     { title: "Total Vehicles Out", data: 6 },
     { title: "Total Collection", data: 650 || 0 },
@@ -85,7 +91,7 @@ export default function ReceiptScreen({ navigation }) {
     //   }
     // }
     // let fixedPrice = false;
-    // if (generalSetting?.dev_mod == 'F') {
+    // if (generalSettings?.dev_mod == 'F') {
     //   fixedPrice = await getFixedPricesByVehicleId(props.vehicle_id);
     //   // alert(JSON.stringify(fixedPrice))
     //   if (fixedPrice.length == 0) {
@@ -103,11 +109,11 @@ export default function ReceiptScreen({ navigation }) {
     navigation.navigate("create_receipt", {
       type: props.vehicle_name,
       id: props.vehicle_id,
-      // userId: userDetails?.user_id,
-      // operatorName: userDetails?.name,
+      userId: userDetails?.user_id,
+      operatorName: userDetails?.operator_name,
       // receiptNo: receiptNo,
       // currentDayTotalReceipt: totalVehicleIn,
-      // imei_no: userDetails?.imei_no,
+      deviceId: userDetails?.device_id,
       // advanceData: advancePrice,
       // fixedPriceData: fixedPrice,
     });
