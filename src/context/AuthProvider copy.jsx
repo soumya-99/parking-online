@@ -58,10 +58,8 @@ export const AuthProvider = ({ children }) => {
           } else {
             ToastAndroid.showWithGravityAndOffset(
               "Invalid Credentials",
-              3,
-              25,
-              25,
-              25,
+              ToastAndroid.SHORT,
+              ToastAndroid.CENTER,
             );
             console.log("Error login Axios");
           }

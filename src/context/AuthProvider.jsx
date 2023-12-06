@@ -30,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   });
   const [rateDetailsList, setRateDetailsList] = useState(() => []);
   const [gstList, setGstList] = useState({});
+  const [detailedReports, setDetailedReports] = useState(() => []);
 
   useEffect(() => {
     isLoggedIn();
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     const credentials = {
       password: password,
       user_id: username,
-      device_id: deviceId
+      device_id: deviceId,
     };
 
     try {
@@ -59,10 +60,8 @@ export const AuthProvider = ({ children }) => {
           } else {
             ToastAndroid.showWithGravityAndOffset(
               "Invalid Credentials",
-              3,
-              25,
-              25,
-              25,
+              ToastAndroid.SHORT,
+              ToastAndroid.CENTER,
             );
             console.log("Error login Axios");
           }
@@ -100,6 +99,7 @@ export const AuthProvider = ({ children }) => {
       )
       .then(res => {
         setGeneralSettings(res.data.data.msg[0]);
+        getGstList();
         // appStorage.set("general-settings", JSON.stringify(res.data.data.msg[0]))
       })
       .catch(err => {
@@ -107,25 +107,26 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const getRateDetailsList = async () => {
-    const loginData = JSON.parse(loginStorage.getString("login-data"));
-    await axios
-      .post(
-        ADDRESSES.RATE_DETAILS_LIST,
-        { dev_mod: generalSettings.dev_mod },
-        {
-          headers: {
-            Authorization: loginData.token,
-          },
-        },
-      )
-      .then(res => {
-        setRateDetailsList(res.data.data.msg);
-      })
-      .catch(err => {
-        console.log("ERR - getRateDetailsList - AuthProvider", err);
-      });
-  };
+  // const getRateDetailsList = async () => {
+  //   const loginData = JSON.parse(loginStorage.getString("login-data"));
+  //   await axios
+  //     .post(
+  //       ADDRESSES.RATE_DETAILS_LIST,
+  //       { dev_mod: generalSettings.dev_mod },
+  //       {
+  //         headers: {
+  //           Authorization: loginData.token,
+  //         },
+  //       },
+  //     )
+  //     .then(res => {
+  //       console.log("RES - getRateDetailsList", res.data.data);
+  //       setRateDetailsList(res.data.data.msg);
+  //     })
+  //     .catch(err => {
+  //       console.log("ERR - getRateDetailsList - AuthProvider", err);
+  //     });
+  // };
 
   const getGstList = async () => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
@@ -147,11 +148,62 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  useEffect(() => {
-    console.log("getGeneralSettings, getGstList Called - AuthProvider");
-    getGeneralSettings();
-    getGstList();
-  }, []);
+  const carIn = async (
+    vehicleId,
+    vehicleNo,
+    baseAmt,
+    paidAmt,
+    gstFlag,
+    cgst,
+    sgst,
+  ) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.CAR_IN,
+        {
+          vehicle_id: vehicleId,
+          vehicle_no: vehicleNo,
+          base_amt: baseAmt,
+          paid_amt: paidAmt,
+          gst_flag: gstFlag,
+          cgst: cgst,
+          sgst: sgst,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        console.log("carIn - res - AuthProvider", res.data.message);
+      })
+      .catch(err => {
+        console.log("EWREEEEEEEEEEEEEEEEEERRRRRR", err);
+      });
+  };
+
+  const getDetailedReport = async (fromDate, toDate) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.VEHICLE_WISE_REPORT,
+        {
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        console.log("res - vehicleWiseReport - AuthProvider", res);
+        setDetailedReports(res.data.data.msg);
+      });
+  };
 
   const logout = () => {
     loginStorage.clearAll();
@@ -169,10 +221,13 @@ export const AuthProvider = ({ children }) => {
         logout,
         generalSettings,
         getGeneralSettings,
-        rateDetailsList,
-        getRateDetailsList,
+        // rateDetailsList,
+        // getRateDetailsList,
         gstList,
         getGstList,
+        carIn,
+        getDetailedReport,
+        detailedReports,
       }}>
       {children}
     </AuthContext.Provider>

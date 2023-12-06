@@ -6,6 +6,7 @@ import {
   Pressable,
   PixelRatio,
   ScrollView,
+  ToastAndroid,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 
@@ -26,9 +27,15 @@ export default function ReceiptScreen({ navigation }) {
 
   // console.log("ReceiptScreen - userDetails", userDetails)
 
-  const { generalSettings, getRateDetailsList, getGstList } = useContext(AuthContext);
+  const {
+    generalSettings,
+    rateDetailsList,
+    getRateDetailsList,
+    getGstList,
+    getGeneralSettings,
+  } = useContext(AuthContext);
 
-  const {dev_mod} = generalSettings;
+  const { dev_mod } = generalSettings;
 
   const todayCollectionArray = [
     { title: "Operator Name", data: userDetails.operator_name },
@@ -59,9 +66,34 @@ export default function ReceiptScreen({ navigation }) {
   };
 
   useEffect(() => {
+    console.log("Effect - getVehicles Called - ReceiptScreen");
     getVehicles();
   }, []);
 
+  useEffect(() => {
+    console.log(
+      "Effect - getGeneralSettings, getRateDetailsList Called - ReceiptScreen",
+    );
+    getGeneralSettings();
+  }, []);
+
+  // const getVehicleRateFixedByVehicleId = async (devMode, id) => {
+  //   // const vehicleObjectFixed = rateDetailsList.filter(
+  //   //   item => item.rate_type === "F",
+  //   // );
+  //   // // const fixedRateObject = vehicleObjectFixed.filter(
+  //   // //   item => item.vehicle_id === id,
+  //   // // );
+  //   // return vehicleObjectFixed;
+  //   const loginData = JSON.parse(loginStorage.getString("login-data"));
+  //   await axios.post(ADDRESSES.FIXED_RATE_DETAILS_LIST, {dev_mod: devMode, vehicle_id: id}, {
+  //     headers: {
+  //       Authorization: loginData.token
+  //     }
+  //   }).then(res => {
+
+  //   })
+  // };
 
   const handleNavigation = async props => {
     // const result = await getVehicleRatesByVehicleId(props.vehicle_id);
@@ -91,12 +123,13 @@ export default function ReceiptScreen({ navigation }) {
     //   }
     // }
     // let fixedPrice = false;
-    // if (generalSettings?.dev_mod == 'F') {
-    //   fixedPrice = await getFixedPricesByVehicleId(props.vehicle_id);
+    // let fixedPriceData = [];
+    // if (generalSettings?.dev_mod == "F") {
+    //   fixedPriceData = getVehicleRatesFixedByVehicleId(props.vehicle_id);
     //   // alert(JSON.stringify(fixedPrice))
-    //   if (fixedPrice.length == 0) {
+    //   if (fixedPriceData.length == 0) {
     //     ToastAndroid.showWithGravityAndOffset(
-    //       'Fixed price Not available contact owner',
+    //       "Fixed price Not available contact owner",
     //       ToastAndroid.LONG,
     //       ToastAndroid.CENTER,
     //       25,
@@ -115,7 +148,7 @@ export default function ReceiptScreen({ navigation }) {
       // currentDayTotalReceipt: totalVehicleIn,
       deviceId: userDetails?.device_id,
       // advanceData: advancePrice,
-      // fixedPriceData: fixedPrice,
+      // fixedPriceData: fixedPriceData,
     });
   };
 
