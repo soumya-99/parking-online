@@ -27,13 +27,6 @@ import { AuthContext } from "../../context/AuthProvider";
 export default function VehicleWiseFixedReportScreen({ navigation }) {
   const { vehicleWiseReports, getVehicleWiseReport } = useContext(AuthContext);
 
-  // State for manage the  total price
-  const [totalPrice, setTotalPrice] = useState(0);
-  // State for manage the  total quantity
-  const [totalQTY, setTotalQTY] = useState(0);
-  // State for manage the  total Advance Price
-  const [totalAdvance, setTotalAdvance] = useState(0);
-
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
   const [loading, setLoading] = useState();
@@ -151,7 +144,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
           onAction={() => submitDetails()}
         />
 
-        {loading && <Text> fetchig data... </Text>}
+        {loading && <Text> fetching data... </Text>}
 
         {/* report genarate table */}
         {vehicleWiseReports && (
