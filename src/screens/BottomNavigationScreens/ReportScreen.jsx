@@ -10,7 +10,6 @@ export default function ReportScreen({ navigation }) {
       <CustomHeader title="Reports" />
       <ScrollView>
         <View style={styles.report_container}>
-        
           <View style={styles.ActionBox_style}>
             <ActionBox
               title="Unbilled Reports"
@@ -20,13 +19,15 @@ export default function ReportScreen({ navigation }) {
           <View style={styles.ActionBox_style}>
             <ActionBox
               title="Vehicle Wise Reports"
-              onAction={() => navigation.navigate("Vehicle_Wise_Reports")}
+              onAction={() =>
+                navigation.navigate("Vehiclewise_Fixed_Report_Screen")
+              }
             />
           </View>
           <View style={styles.ActionBox_style}>
             <ActionBox
               title="Operator Wise Reports"
-              onAction={() => navigation.navigate("Operator_Wise_Reports")}
+              onAction={() => navigation.navigate("Operatorwise_Report_Screen")}
               icon={icons.users}
             />
           </View>
@@ -34,6 +35,13 @@ export default function ReportScreen({ navigation }) {
             <ActionBox
               title="Detailed Report"
               onAction={() => navigation.navigate("Detailed_Report_Screen")}
+              icon={icons.users}
+            />
+          </View>
+          <View style={styles.ActionBox_style}>
+            <ActionBox
+              title="Shiftwise Report"
+              onAction={() => navigation.navigate("Shiftwise_Report_Screen")}
               icon={icons.users}
             />
           </View>

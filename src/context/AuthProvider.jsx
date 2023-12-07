@@ -3,6 +3,7 @@ import { ToastAndroid } from "react-native";
 import axios from "axios";
 import { ADDRESSES } from "../routes/addresses";
 import { appStorage, loginStorage } from "../storage/appStorage";
+import { clearStates } from "../utils/clearStates";
 
 export const AuthContext = createContext();
 
@@ -31,6 +32,9 @@ export const AuthProvider = ({ children }) => {
   const [rateDetailsList, setRateDetailsList] = useState(() => []);
   const [gstList, setGstList] = useState({});
   const [detailedReports, setDetailedReports] = useState(() => []);
+  const [shiftwiseReports, setShiftwiseReports] = useState(() => []);
+  const [vehicleWiseReports, setVehicleWiseReports] = useState(() => []);
+  const [operatorwiseReports, setOperatorwiseReports] = useState(() => []);
 
   useEffect(() => {
     isLoggedIn();
@@ -52,6 +56,7 @@ export const AuthProvider = ({ children }) => {
           },
         })
         .then(res => {
+          console.log(res.data.message);
           if (res.data.status) {
             loginStorage.set("login-data-local", JSON.stringify(credentials));
             loginStorage.set("login-data", JSON.stringify(res.data.data));
@@ -188,6 +193,51 @@ export const AuthProvider = ({ children }) => {
     const loginData = JSON.parse(loginStorage.getString("login-data"));
     await axios
       .post(
+        ADDRESSES.DETAILED_REPORT,
+        {
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        console.log("res - getDetailedReport - AuthProvider", res.data.message);
+        setDetailedReports(res.data.data.msg);
+      });
+  };
+
+  const getShiftwiseReport = async (fromDate, toDate) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.SHIFTWISE_REPORT,
+        {
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        console.log(
+          "res - getShiftwiseReport - AuthProvider",
+          res.data.message,
+        );
+        setShiftwiseReports(res.data.data.msg);
+      });
+  };
+
+  const getVehicleWiseReport = async (fromDate, toDate) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
         ADDRESSES.VEHICLE_WISE_REPORT,
         {
           from_date: fromDate,
@@ -200,14 +250,56 @@ export const AuthProvider = ({ children }) => {
         },
       )
       .then(res => {
-        console.log("res - vehicleWiseReport - AuthProvider", res);
-        setDetailedReports(res.data.data.msg);
+        // console.log("res - getVehicleWiseReport - AuthProvider", res);
+        console.log(
+          "res - getVehicleWiseReport - AuthProvider",
+          res.data.message,
+        );
+        setVehicleWiseReports(res.data.data.msg);
+      });
+  };
+
+  const getOperatorwiseReport = async (fromDate, toDate) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.OPERATORWISE_REPORT,
+        {
+          from_date: fromDate,
+          to_date: toDate,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        // console.log("res - getOperatorwiseReport - AuthProvider", res);
+        console.log(
+          "res - getOperatorwiseReport - AuthProvider",
+          res.data.message,
+        );
+        setOperatorwiseReports(res.data.data.msg);
       });
   };
 
   const logout = () => {
     loginStorage.clearAll();
     appStorage.clearAll();
+
+    setGeneralSettings({});
+    clearStates(
+      [
+        setGstList,
+        setDetailedReports,
+        setShiftwiseReports,
+        setVehicleWiseReports,
+        setOperatorwiseReports,
+      ],
+      [],
+    );
+
     setIsLogin(!isLogin);
     console.log("LOGGING OUT...");
   };
@@ -228,6 +320,12 @@ export const AuthProvider = ({ children }) => {
         carIn,
         getDetailedReport,
         detailedReports,
+        shiftwiseReports,
+        getShiftwiseReport,
+        vehicleWiseReports,
+        getVehicleWiseReport,
+        operatorwiseReports,
+        getOperatorwiseReport,
       }}>
       {children}
     </AuthContext.Provider>

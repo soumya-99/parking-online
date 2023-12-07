@@ -144,13 +144,13 @@ const CreateReceiptScreen = ({ navigation, route }) => {
       gstList.gst_flag,
       0,
       0,
-      )
-      
-      setLoading(false);
-      setVehicleNumber("");
-      
-      // navigate to previous screen
-      navigation.navigate("ReceiptScreen");
+    );
+
+    setLoading(false);
+    setVehicleNumber("");
+
+    // navigate to previous screen
+    navigation.navigate("ReceiptScreen");
   };
 
   return (

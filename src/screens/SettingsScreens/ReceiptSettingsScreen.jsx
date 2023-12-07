@@ -18,33 +18,30 @@ import axios from "axios";
 import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 
-
 const ReceiptSettingsScreen = ({ navigation }) => {
   const [pic, setPic] = useState();
   async function handlePickImage() {
     const options = {
-        selectionLimit: 1,
-        maxWidth:250,
-        maxHeight:250
+      selectionLimit: 1,
+      maxWidth: 250,
+      maxHeight: 250,
     };
 
-    await launchImageLibrary(options).then(
-        async res => {
-            console.log(res.assets[0])
-            setPic(res.assets[0].uri)
-            console.log(res.assets[0].uri)
+    await launchImageLibrary(options)
+      .then(async res => {
+        console.log(res.assets[0]);
+        setPic(res.assets[0].uri);
+        console.log(res.assets[0].uri);
 
-            let base64String = await ImgToBase64.getBase64String(res.assets[0].uri)
-            base64String = `data:image/jpeg;base64,${base64String.toString()}`
-            base64String = base64String.replace(/\s/g, '')
-            console.log("Loading complete...")
-            { }
+        let base64String = await ImgToBase64.getBase64String(res.assets[0].uri);
+        base64String = `data:image/jpeg;base64,${base64String.toString()}`;
+        base64String = base64String.replace(/\s/g, "");
+        console.log("Loading complete...");
+        {
         }
-
-    ).catch(
-        err => console.log("ERR -  launchImageLibrary", err)
-    )
-}
+      })
+      .catch(err => console.log("ERR -  launchImageLibrary", err));
+  }
 
   // const print = async () => {
   //     try {

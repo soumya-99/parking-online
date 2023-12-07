@@ -111,7 +111,7 @@ const GeneralSettingsScreen = ({ navigation }) => {
   // };
 
   useEffect(() => {
-    console.log("General Settings Called - GeneralSettingsScreen")
+    console.log("General Settings Called - GeneralSettingsScreen");
     const generalSettings = getGeneralSettings();
     return () => clearInterval(generalSettings);
   }, []);

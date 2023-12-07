@@ -24,8 +24,8 @@ const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 
-export default function VehicleWiseFixedReportScreen({ navigation }) {
-  const { vehicleWiseReports, getVehicleWiseReport } = useContext(AuthContext);
+export default function ShiftWiseReportScreen({ navigation }) {
+  const { shiftwiseReports, getShiftwiseReport } = useContext(AuthContext);
 
   // State for manage the  total price
   const [totalPrice, setTotalPrice] = useState(0);
@@ -70,20 +70,20 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [value, setValue] = useState(0);
 
   /**
-   * vehicle_id
-   * vehicle_no
-   * date_time_in
-   * paid_amt
+   * shift_name
+   * operator_name
+   * quantity
+   *
    */
 
   useEffect(() => {
-    getVehicleWiseReport(mydateFrom, mydateTo);
+    getShiftwiseReport(mydateFrom, mydateTo);
   }, [mydateFrom, mydateTo]);
 
   return (
     <View style={{ flex: 1 }}>
       {/* render custom Header */}
-      <CustomHeader title="Vehicle Wise Report" navigation={navigation} />
+      <CustomHeader title="Shiftwise Report" navigation={navigation} />
       {/* render from date picker */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
@@ -143,38 +143,32 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         {loading && <Text> fetchig data... </Text>}
 
         {/* report genarate table */}
-        {vehicleWiseReports && (
+        {shiftwiseReports && (
           <View>
             <ScrollView>
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
+                  <Text style={[styles.headerText, styles.hcell]}>Shift</Text>
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. Id.
+                    Op. Name
                   </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. No.
-                  </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>In time</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Qty.</Text>
 
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Paid Amt.
-                  </Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Amount</Text> */}
                 </View>
-                {vehicleWiseReports &&
-                  vehicleWiseReports.map((item, index) => (
+                {shiftwiseReports &&
+                  shiftwiseReports.map((item, index) => (
                     <View
                       style={[
                         styles.row,
                         index % 2 != 0 ? styles.evenBg : styles.oddbg,
                       ]}
                       key={index}>
-                      <Text style={[styles.cell]}>{item.vehicle_id} </Text>
-                      <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-                      <Text style={[styles.cell]}>
-                        {new Date(item.date_time_in).toLocaleString()}
-                      </Text>
+                      <Text style={[styles.cell]}>{item.shift_name} </Text>
+                      <Text style={[styles.cell]}>{item.operator_name}</Text>
+                      <Text style={[styles.cell]}>{item.quantity}</Text>
 
-                      <Text style={[styles.cell]}>{item.paid_amt}</Text>
+                      {/* <Text style={[styles.cell]}>{item.paid_amt}</Text> */}
                       {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                     </View>
                   ))}

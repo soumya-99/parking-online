@@ -25,7 +25,7 @@ import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 
 export default function DetailedReportScreen({ navigation }) {
-    const {getDetailedReport, detailedReports} = useContext(AuthContext)
+  const { getDetailedReport, detailedReports } = useContext(AuthContext);
 
   // State for manage the  total price
   const [totalPrice, setTotalPrice] = useState(0);
@@ -68,6 +68,7 @@ export default function DetailedReportScreen({ navigation }) {
 
   const [showGenerate, setShowGenerate] = useState(false);
   const [value, setValue] = useState(0);
+  let totalAmount = 0;
 
   /**
    * receipt no
@@ -77,8 +78,8 @@ export default function DetailedReportScreen({ navigation }) {
    */
 
   useEffect(() => {
-    getDetailedReport(mydateFrom, mydateTo)
-  }, [mydateFrom, mydateTo])
+    getDetailedReport(mydateFrom, mydateTo);
+  }, [mydateFrom, mydateTo]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -148,47 +149,57 @@ export default function DetailedReportScreen({ navigation }) {
             <ScrollView>
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
-                  <Text style={[styles.headerText, styles.hcell]}>Rcpt. No.</Text>
-                  <Text style={[styles.headerText, styles.hcell]}>Veh. No.</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>
+                    Rcpt. No.
+                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>
+                    Veh. No.
+                  </Text>
                   <Text style={[styles.headerText, styles.hcell]}>In Time</Text>
 
                   <Text style={[styles.headerText, styles.hcell]}>Amount</Text>
                 </View>
                 {detailedReports &&
-                  detailedReports.map((item, index) => (
-                    <View
-                      style={[
-                        styles.row,
-                        index % 2 != 0 ? styles.evenBg : styles.oddbg,
-                      ]}
-                      key={index}>
-                      {console.log(item.vehicle_id)}
-                      <Text style={[styles.cell]}>{item.receiptNo} </Text>
-                      <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-                      <Text style={[styles.cell]}>{new Date(item.date_time_in).toLocaleString()}</Text>
+                  detailedReports.map((item, index) => {
+                    totalAmount += item.paid_amt;
+                    return (
+                      <View
+                        style={[
+                          styles.row,
+                          index % 2 != 0 ? styles.evenBg : styles.oddbg,
+                        ]}
+                        key={index}>
+                        <Text style={[styles.cell]}>{item.receiptNo} </Text>
+                        <Text style={[styles.cell]}>{item.vehicle_no}</Text>
+                        <Text style={[styles.cell]}>
+                          {new Date(item.date_time_in).toLocaleString()}
+                        </Text>
 
-                      <Text style={[styles.cell]}>{item.paid_amt}</Text>
-                      {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                    </View>
-                  ))}
+                        <Text style={[styles.cell]}>{item.paid_amt}</Text>
+                        {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                      </View>
+                    );
+                  })}
                 {
-                //     <View
-                //   style={{
-                //     ...styles.row,
-                //     backgroundColor: colors["primary-color"],
-                //   }}>
-                //   <Text style={[styles.cell, styles.hcell]}>{"Total"} </Text>
-                //   <Text style={[styles.cell, styles.hcell]}>
-                //     {detailedReportData && totalQTY}
-                //   </Text>
-                //   <Text style={[styles.cell, styles.hcell]}>
-                //     {detailedReportData && totalAdvance}
-                //   </Text>
-                //   <Text style={[styles.cell, styles.hcell]}>
-                //     {detailedReportData && totalPrice}
-                //   </Text>
-                //   {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                // </View>
+                  <View
+                    style={{
+                      ...styles.row,
+                      backgroundColor: colors["primary-color"],
+                    }}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Total Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAmount}
+                    </Text>
+                    {/* <Text style={[styles.cell, styles.hcell]}>
+                    {detailedReportData && totalAdvance}
+                  </Text>
+                  <Text style={[styles.cell, styles.hcell]}>
+                    {detailedReportData && totalPrice}
+                  </Text> */}
+                    {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                  </View>
                 }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
@@ -203,13 +214,13 @@ export default function DetailedReportScreen({ navigation }) {
         <View style={styles.actionButton}>
           {/* Generate Button */}
           {
-        //   showGenerate && (
-        //     <CustomButton.GoButton
-        //       title={"Generate Report"}
-        //       style={{ flex: 1, marginLeft: 10 }}
-        //       onAction={() => handleGenerateReport()}
-        //     />
-        //   )
+            //   showGenerate && (
+            //     <CustomButton.GoButton
+            //       title={"Generate Report"}
+            //       style={{ flex: 1, marginLeft: 10 }}
+            //       onAction={() => handleGenerateReport()}
+            //     />
+            //   )
           }
           {/* Back Button */}
           {

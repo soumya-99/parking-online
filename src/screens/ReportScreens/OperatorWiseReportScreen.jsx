@@ -24,8 +24,9 @@ const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
 
-export default function VehicleWiseFixedReportScreen({ navigation }) {
-  const { vehicleWiseReports, getVehicleWiseReport } = useContext(AuthContext);
+export default function OperatorWiseReportScreen({ navigation }) {
+  const { operatorwiseReports, getOperatorwiseReport } =
+    useContext(AuthContext);
 
   // State for manage the  total price
   const [totalPrice, setTotalPrice] = useState(0);
@@ -70,20 +71,22 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   const [value, setValue] = useState(0);
 
   /**
-   * vehicle_id
+   * operator_id
+   * operator_name
    * vehicle_no
-   * date_time_in
    * paid_amt
    */
 
+  let totalAmount = 0;
+
   useEffect(() => {
-    getVehicleWiseReport(mydateFrom, mydateTo);
+    getOperatorwiseReport(mydateFrom, mydateTo);
   }, [mydateFrom, mydateTo]);
 
   return (
     <View style={{ flex: 1 }}>
       {/* render custom Header */}
-      <CustomHeader title="Vehicle Wise Report" navigation={navigation} />
+      <CustomHeader title="Operatorwise Report" navigation={navigation} />
       {/* render from date picker */}
       {isDisplayDateFrom && (
         <RNDateTimePicker
@@ -143,14 +146,12 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
         {loading && <Text> fetchig data... </Text>}
 
         {/* report genarate table */}
-        {vehicleWiseReports && (
+        {operatorwiseReports && (
           <View>
             <ScrollView>
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. Id.
-                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Op. Id.</Text>
                   <Text style={[styles.headerText, styles.hcell]}>
                     Veh. No.
                   </Text>
@@ -160,42 +161,48 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                     Paid Amt.
                   </Text>
                 </View>
-                {vehicleWiseReports &&
-                  vehicleWiseReports.map((item, index) => (
-                    <View
-                      style={[
-                        styles.row,
-                        index % 2 != 0 ? styles.evenBg : styles.oddbg,
-                      ]}
-                      key={index}>
-                      <Text style={[styles.cell]}>{item.vehicle_id} </Text>
-                      <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-                      <Text style={[styles.cell]}>
-                        {new Date(item.date_time_in).toLocaleString()}
-                      </Text>
+                {operatorwiseReports &&
+                  operatorwiseReports.map((item, index) => {
+                    totalAmount += item.paid_amt;
+                    return (
+                      <View
+                        style={[
+                          styles.row,
+                          index % 2 != 0 ? styles.evenBg : styles.oddbg,
+                        ]}
+                        key={index}>
+                        <Text style={[styles.cell]}>{item.operator_id} </Text>
+                        {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
+                        <Text style={[styles.cell]}>{item.vehicle_no}</Text>
+                        <Text style={[styles.cell]}>
+                          {new Date(item.date_time_in).toLocaleString()}
+                        </Text>
 
-                      <Text style={[styles.cell]}>{item.paid_amt}</Text>
-                      {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                    </View>
-                  ))}
+                        <Text style={[styles.cell]}>{item.paid_amt}</Text>
+                        {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                      </View>
+                    );
+                  })}
                 {
-                  //     <View
-                  //   style={{
-                  //     ...styles.row,
-                  //     backgroundColor: colors["primary-color"],
-                  //   }}>
-                  //   <Text style={[styles.cell, styles.hcell]}>{"Total"} </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalQTY}
-                  //   </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalAdvance}
-                  //   </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalPrice}
-                  //   </Text>
-                  //   {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                  // </View>
+                  <View
+                    style={{
+                      ...styles.row,
+                      backgroundColor: colors["primary-color"],
+                    }}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Total Amount
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAmount}
+                    </Text>
+                    {/* <Text style={[styles.cell, styles.hcell]}>
+                      {detailedReportData && totalAdvance}
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {detailedReportData && totalPrice}
+                    </Text>
+                    <Text style={[styles.cell]}>{item.age}</Text> */}
+                  </View>
                 }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>
