@@ -79,9 +79,15 @@ export default function OperatorWiseReportScreen({ navigation }) {
 
   let totalAmount = 0;
 
-  useEffect(() => {
-    getOperatorwiseReport(mydateFrom, mydateTo);
-  }, [mydateFrom, mydateTo]);
+  // useEffect(() => {
+  //   getOperatorwiseReport(mydateFrom, mydateTo);
+  // }, [mydateFrom, mydateTo]);
+
+  const submitDetails = () => {
+    let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
+    let formattedDateTo = mydateTo.toISOString().slice(0, 10);
+    getOperatorwiseReport(formattedDateFrom, formattedDateTo);
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -142,6 +148,12 @@ export default function OperatorWiseReportScreen({ navigation }) {
             </Text>
           </Pressable>
         </View>
+
+        <CustomButton.GoButton
+          title="Submit"
+          style={{ margin: 10 }}
+          onAction={() => submitDetails()}
+        />
 
         {loading && <Text> fetchig data... </Text>}
 

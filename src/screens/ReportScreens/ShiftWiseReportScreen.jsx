@@ -76,9 +76,15 @@ export default function ShiftWiseReportScreen({ navigation }) {
    *
    */
 
-  useEffect(() => {
-    getShiftwiseReport(mydateFrom, mydateTo);
-  }, [mydateFrom, mydateTo]);
+  // useEffect(() => {
+  //   getShiftwiseReport(mydateFrom, mydateTo);
+  // }, [mydateFrom, mydateTo]);
+
+  const submitDetails = () => {
+    let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
+    let formattedDateTo = mydateTo.toISOString().slice(0, 10);
+    getShiftwiseReport(formattedDateFrom, formattedDateTo);
+  };
 
   return (
     <View style={{ flex: 1 }}>
@@ -139,6 +145,12 @@ export default function ShiftWiseReportScreen({ navigation }) {
             </Text>
           </Pressable>
         </View>
+
+        <CustomButton.GoButton
+          title="Submit"
+          style={{ margin: 10 }}
+          onAction={() => submitDetails()}
+        />
 
         {loading && <Text> fetchig data... </Text>}
 
