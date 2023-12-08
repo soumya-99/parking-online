@@ -7,8 +7,11 @@ import {
   PixelRatio,
   ScrollView,
   ToastAndroid,
+  NativeModules,
+  PermissionsAndroid,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
+import BleManager from 'react-native-ble-manager';
 
 import CustomHeader from "../../components/CustomHeader";
 import styles from "../../styles/styles";
@@ -20,6 +23,8 @@ import { loginStorage } from "../../storage/appStorage";
 import { AuthContext } from "../../context/AuthProvider";
 
 export default function ReceiptScreen({ navigation }) {
+  const {greet} = NativeModules.MyPrinter;
+
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -45,6 +50,69 @@ export default function ReceiptScreen({ navigation }) {
   ];
 
   const [vehicles, setVehicles] = useState(() => []);
+
+  const [isBlueToothEnable, setIsBlueToothEnable] = useState(false);
+  async function checkBluetoothEnabled() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Bluetooth Permission",
+          message:
+            "This app needs access to your location to check Bluetooth status.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        BleManager.enableBluetooth()
+          .then(() => {
+            // Success code
+            setIsBlueToothEnable(true);
+            console.log("The bluetooth is already enabled or the user confirm");
+          })
+          .catch(error => {
+            // Failure code
+            console.log("The user refuse to enable bluetooth");
+          });
+        // const isEnabled = await BluetoothStatus.isEnabled();
+        // console.log('Bluetooth Enabled:', isEnabled);
+      } else {
+        console.log("Bluetooth permission denied");
+      }
+    } catch (error) {
+      console.log("Error checking Bluetooth status:", error);
+    }
+  }
+
+  const handlePrint = async () => {
+    // await checkBluetoothEnabled();
+
+    // if (!isBlueToothEnable) {
+    //   ToastAndroid.show(
+    //     "Please enable the bluetooth first.",
+    //     ToastAndroid.SHORT,
+    //   );
+    //   return;
+    // }
+
+    let headerPayload = "OPERATOR WISE REPORT\n";
+
+    // MyNativeModule.printHeader(headerPayload, 24, (err, msg) => {
+    //   if (err) {
+    //     console.error(err);
+    //   }
+    //   console.warn(msg);
+    // });
+
+    greet("Hello there, ", (err, msg) => {
+        if (err) {
+          console.error(err);
+        }
+        console.warn(msg);
+      });
+  };
 
   const getVehicles = async () => {
     await axios
@@ -77,68 +145,7 @@ export default function ReceiptScreen({ navigation }) {
     getGeneralSettings();
   }, []);
 
-  // const getVehicleRateFixedByVehicleId = async (devMode, id) => {
-  //   // const vehicleObjectFixed = rateDetailsList.filter(
-  //   //   item => item.rate_type === "F",
-  //   // );
-  //   // // const fixedRateObject = vehicleObjectFixed.filter(
-  //   // //   item => item.vehicle_id === id,
-  //   // // );
-  //   // return vehicleObjectFixed;
-  //   const loginData = JSON.parse(loginStorage.getString("login-data"));
-  //   await axios.post(ADDRESSES.FIXED_RATE_DETAILS_LIST, {dev_mod: devMode, vehicle_id: id}, {
-  //     headers: {
-  //       Authorization: loginData.token
-  //     }
-  //   }).then(res => {
-
-  //   })
-  // };
-
   const handleNavigation = async props => {
-    // const result = await getVehicleRatesByVehicleId(props.vehicle_id);
-
-    // if (result.length == 0 && generalSetting?.dev_mod != 'F') {
-    //   ToastAndroid.showWithGravityAndOffset(
-    //     'Vehicle Rate Not available contact owner',
-    //     ToastAndroid.LONG,
-    //     ToastAndroid.CENTER,
-    //     25,
-    //     50,
-    //   );
-    //   return;
-    // }
-    // let advancePrice = false;
-    // if (generalSetting.adv_pay == 'Y' && generalSetting?.dev_mod != 'F') {
-    //   advancePrice = await getAdvancePricesByVehicleId(props.vehicle_id);
-    //   if (advancePrice.length == 0) {
-    //     ToastAndroid.showWithGravityAndOffset(
-    //       'Advance price Not available contact owner',
-    //       ToastAndroid.LONG,
-    //       ToastAndroid.CENTER,
-    //       25,
-    //       50,
-    //     );
-    //     return;
-    //   }
-    // }
-    // let fixedPrice = false;
-    // let fixedPriceData = [];
-    // if (generalSettings?.dev_mod == "F") {
-    //   fixedPriceData = getVehicleRatesFixedByVehicleId(props.vehicle_id);
-    //   // alert(JSON.stringify(fixedPrice))
-    //   if (fixedPriceData.length == 0) {
-    //     ToastAndroid.showWithGravityAndOffset(
-    //       "Fixed price Not available contact owner",
-    //       ToastAndroid.LONG,
-    //       ToastAndroid.CENTER,
-    //       25,
-    //       50,
-    //     );
-    //     return;
-    //   }
-    // }
-
     navigation.navigate("create_receipt", {
       type: props.vehicle_name,
       id: props.vehicle_id,
@@ -202,7 +209,7 @@ export default function ReceiptScreen({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           style={otherStyle.print_action_button}
-          onPress={() => console.log("======handlePlay======")}>
+          onPress={() => handlePrint()}>
           {icons.print}
         </TouchableOpacity>
       </View>
