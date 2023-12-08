@@ -13,4 +13,5 @@ export const ADDRESSES = {
   SHIFTWISE_REPORT: `${BASE_URL}/report/shift_wise`,
   VEHICLE_WISE_REPORT: `${BASE_URL}/report/vehicle_wise`,
   OPERATORWISE_REPORT: `${BASE_URL}/report/operator_wise`,
+  CHANGE_PASSWORD: `${BASE_URL}/auth/change_password`,
 };

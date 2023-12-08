@@ -1,5 +1,5 @@
 import { PixelRatio, StyleSheet, Text, View, ScrollView } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import colors from "../../resources/colors/colors";
 import strings from "../../resources/strings/strings";
@@ -8,12 +8,25 @@ import InputCustom from "../../components/InputCustom";
 import CustomButton from "../../components/CustomButton";
 
 import estyles from "../../styles/styles";
+import { AuthContext } from "../../context/AuthProvider";
+import { loginStorage } from "../../storage/appStorage";
 
 const ChangePasswordScreen = ({ navigation }) => {
-  // state to store  password
-  const [password, changePassword] = useState("");
-  // state to store Confirm password
-  const [confirmPassword, chaneConfirmPassword] = useState("");
+  const { changePassword, logout } = useContext(AuthContext);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // const handleChangePassword = async (password, confirmPassword) => {
+  //   await changePassword(password, confirmPassword);
+  // }
+
+  // loginData = JSON.parse(loginStorage.getString("login-data"));
+  const loginDataString = loginStorage.getString("login-data");
+  if (loginDataString) {
+    loginData = JSON.parse(loginDataString);
+  } else {
+    console.error("login-data is undefined");
+  }
 
   return (
     <>
@@ -24,7 +37,10 @@ const ChangePasswordScreen = ({ navigation }) => {
           {/* user Details */}
           <View style={styles.userDetils_container}>
             {/* user name */}
-            <Text style={styles.user_name}> Hello, {"userDetails?.name"} </Text>
+            <Text style={styles.user_name}>
+              {" "}
+              Hello, {loginData.user.userdata.msg[0].operator_name}{" "}
+            </Text>
             {/* comapny Name */}
             <Text style={styles.comapny_name}> {strings.company_name} </Text>
             {/* Divider */}
@@ -37,7 +53,9 @@ const ChangePasswordScreen = ({ navigation }) => {
             {/* phone */}
             <View style={{ flexDirection: "row" }}>
               {icons.phone}
-              <Text style={{ marginLeft: 10 }}>{"userDetails?.user_id"}</Text>
+              <Text style={{ marginLeft: 10 }}>
+                {loginData.user.userdata.msg[0].mobile_no}
+              </Text>
             </View>
           </View>
           {/* Change Password */}
@@ -71,7 +89,7 @@ const ChangePasswordScreen = ({ navigation }) => {
                   icon={icons.unlock}
                   placeholder={"Password"}
                   value={password}
-                  onChangeText={changePassword}
+                  onChangeText={setPassword}
                   keyboardType={"default"}
                   secureTextEntry={true}
                 />
@@ -79,7 +97,7 @@ const ChangePasswordScreen = ({ navigation }) => {
                   icon={icons.unlock}
                   placeholder={"Re-Enter Password"}
                   value={confirmPassword}
-                  onChangeText={chaneConfirmPassword}
+                  onChangeText={setConfirmPassword}
                   keyboardType={"default"}
                   secureTextEntry={true}
                 />
@@ -90,9 +108,9 @@ const ChangePasswordScreen = ({ navigation }) => {
                   <CustomButton.CancelButton
                     title={"Reset"}
                     onAction={() => {
-                      console.log(
-                        "changePassword(''); chaneConfirmPassword('');",
-                      );
+                      setPassword("");
+                      setConfirmPassword("");
+                      console.log("setPassword(''); setConfirmPassword('');");
                     }}
                     style={{
                       flex: 1,
@@ -104,19 +122,18 @@ const ChangePasswordScreen = ({ navigation }) => {
 
                   <CustomButton.GoButton
                     title={"Change Password"}
-                    onAction={
-                      () => console.log("Handle Password Change!")
-                      //   (password && confirmPassword) ? (
-                      //     password === confirmPassword
-                      //       ? handleChangePassword(
-                      //         userDetails.user_id,
-                      //         userDetails.name,
-                      //         password,
-                      //       ).then(() => {
-                      //         changePassword('')
-                      //         chaneConfirmPassword('')
-                      //       })
-                      //       : alert('password does not match ')) : alert('please enter  password')
+                    onAction={() =>
+                      password && confirmPassword
+                        ? password === confirmPassword
+                          ? changePassword(password, confirmPassword).then(
+                              () => {
+                                setPassword("");
+                                setConfirmPassword("");
+                                logout();
+                              },
+                            )
+                          : alert("Password does not match.")
+                        : alert("Please enter password")
                     }
                   />
                 </View>

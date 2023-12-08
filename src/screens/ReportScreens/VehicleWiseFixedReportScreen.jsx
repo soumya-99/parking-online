@@ -73,6 +73,9 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   //   getVehicleWiseReport(mydateFrom, mydateTo);
   // }, [mydateFrom, mydateTo]);
 
+  let totalAmount = 0;
+  let totalAdvanceAmount = 0
+
   const submitDetails = () => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
@@ -153,53 +156,61 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. Id.
+                    Veh.
                   </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. No.
-                  </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>In time</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Count</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>In time</Text> */}
 
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Paid Amt.
+                    Advance
+                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>
+                    Amount
                   </Text>
                 </View>
                 {vehicleWiseReports &&
-                  vehicleWiseReports.map((item, index) => (
-                    <View
-                      style={[
-                        styles.row,
-                        index % 2 != 0 ? styles.evenBg : styles.oddbg,
-                      ]}
-                      key={index}>
-                      <Text style={[styles.cell]}>{item.vehicle_id} </Text>
-                      <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-                      <Text style={[styles.cell]}>
+                  vehicleWiseReports.map((item, index) => {
+                    totalAmount += item.paid_amt;
+                    totalAdvanceAmount += item.adv_amt;
+                    return (
+                      <View
+                        style={[
+                          styles.row,
+                          index % 2 != 0 ? styles.evenBg : styles.oddbg,
+                        ]}
+                        key={index}>
+                        <Text style={[styles.cell]}>{item.vehicle_name} </Text>
+                        <Text style={[styles.cell]}>{item.vehicle_count}</Text>
+                        {/* <Text style={[styles.cell]}>
                         {new Date(item.date_time_in).toLocaleString()}
-                      </Text>
+                      </Text> */}
 
-                      <Text style={[styles.cell]}>{item.paid_amt}</Text>
-                      {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                    </View>
-                  ))}
+                        <Text style={[styles.cell]}>{item.adv_amt}</Text>
+                        <Text style={[styles.cell]}>{item.paid_amt}</Text>
+                      </View>
+                    );
+                  })}
                 {
-                  //     <View
-                  //   style={{
-                  //     ...styles.row,
-                  //     backgroundColor: colors["primary-color"],
-                  //   }}>
-                  //   <Text style={[styles.cell, styles.hcell]}>{"Total"} </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalQTY}
-                  //   </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalAdvance}
-                  //   </Text>
-                  //   <Text style={[styles.cell, styles.hcell]}>
-                  //     {detailedReportData && totalPrice}
-                  //   </Text>
-                  //   {/* <Text style={[styles.cell]}>{item.age}</Text> */}
-                  // </View>
+                  <View
+                    style={{
+                      ...styles.row,
+                      backgroundColor: colors["primary-color"],
+                    }}>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      Total
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}></Text>
+                    {/* <Text style={[styles.cell, styles.hcell]}>
+                      Total Advance
+                    </Text> */}
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAdvanceAmount}
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAmount}
+                    </Text>
+                    {/* <Text style={[styles.cell]}>{item.age}</Text> */}
+                  </View>
                 }
                 <View style={{}}>
                   <Text style={{ marginLeft: 10 }}>

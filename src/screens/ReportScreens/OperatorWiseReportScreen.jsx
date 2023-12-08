@@ -28,13 +28,6 @@ export default function OperatorWiseReportScreen({ navigation }) {
   const { operatorwiseReports, getOperatorwiseReport } =
     useContext(AuthContext);
 
-  // State for manage the  total price
-  const [totalPrice, setTotalPrice] = useState(0);
-  // State for manage the  total quantity
-  const [totalQTY, setTotalQTY] = useState(0);
-  // State for manage the  total Advance Price
-  const [totalAdvance, setTotalAdvance] = useState(0);
-
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
   const [loading, setLoading] = useState();
@@ -78,6 +71,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
    */
 
   let totalAmount = 0;
+  let totalAdvanceAmount = 0;
 
   // useEffect(() => {
   //   getOperatorwiseReport(mydateFrom, mydateTo);
@@ -163,19 +157,24 @@ export default function OperatorWiseReportScreen({ navigation }) {
             <ScrollView>
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
-                  <Text style={[styles.headerText, styles.hcell]}>Op. Id.</Text>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>Sl. No.</Text> */}
                   <Text style={[styles.headerText, styles.hcell]}>
-                    Veh. No.
+                    Name
                   </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>In time</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Count</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>
+                    Amount
+                  </Text>
 
-                  <Text style={[styles.headerText, styles.hcell]}>
+                  {/* <Text style={[styles.headerText, styles.hcell]}>
                     Paid Amt.
-                  </Text>
+                  </Text> */}
                 </View>
                 {operatorwiseReports &&
                   operatorwiseReports.map((item, index) => {
                     totalAmount += item.paid_amt;
+                    totalAdvanceAmount += item.adv_amt;
                     return (
                       <View
                         style={[
@@ -183,14 +182,17 @@ export default function OperatorWiseReportScreen({ navigation }) {
                           index % 2 != 0 ? styles.evenBg : styles.oddbg,
                         ]}
                         key={index}>
-                        <Text style={[styles.cell]}>{item.operator_id} </Text>
-                        {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
-                        <Text style={[styles.cell]}>{item.vehicle_no}</Text>
-                        <Text style={[styles.cell]}>
-                          {new Date(item.date_time_in).toLocaleString()}
-                        </Text>
-
+                        {/* <Text style={[styles.cell]}>{index}</Text> */}
+                        <Text style={[styles.cell]}>{item.operator_name}</Text>
+                        <Text style={[styles.cell]}>{item.vehicle_count}</Text>
+                        <Text style={[styles.cell]}>{item.adv_amt}</Text>
                         <Text style={[styles.cell]}>{item.paid_amt}</Text>
+
+                        {/* <Text style={[styles.cell]}>{item.operator_name}</Text> */}
+                        {/* <Text style={[styles.cell]}>
+                          {new Date(item.date_time_in).toLocaleString()}
+                        </Text> */}
+                        {/* <Text style={[styles.cell]}>{item.paid_amt}</Text> */}
                         {/* <Text style={[styles.cell]}>{item.age}</Text> */}
                       </View>
                     );
@@ -202,15 +204,16 @@ export default function OperatorWiseReportScreen({ navigation }) {
                       backgroundColor: colors["primary-color"],
                     }}>
                     <Text style={[styles.cell, styles.hcell]}>
-                      Total Amount
+                      Total
+                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}></Text>
+                    <Text style={[styles.cell, styles.hcell]}>
+                      {totalAdvanceAmount}
                     </Text>
                     <Text style={[styles.cell, styles.hcell]}>
                       {totalAmount}
                     </Text>
                     {/* <Text style={[styles.cell, styles.hcell]}>
-                      {detailedReportData && totalAdvance}
-                    </Text>
-                    <Text style={[styles.cell, styles.hcell]}>
                       {detailedReportData && totalPrice}
                     </Text>
                     <Text style={[styles.cell]}>{item.age}</Text> */}

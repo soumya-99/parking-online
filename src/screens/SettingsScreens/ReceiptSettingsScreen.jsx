@@ -9,16 +9,15 @@ import {
   Image,
   Button,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import CustomHeader from "../../components/CustomHeader";
 import colors from "../../resources/colors/colors";
 import { launchImageLibrary } from "react-native-image-picker";
 import ImgToBase64 from "react-native-image-base64";
-import axios from "axios";
-import { ADDRESSES } from "../../routes/addresses";
-import { loginStorage } from "../../storage/appStorage";
+import { AuthContext } from "../../context/AuthProvider";
 
 const ReceiptSettingsScreen = ({ navigation }) => {
+  const { receiptSettings, getReceiptSettings } = useContext(AuthContext);
   const [pic, setPic] = useState();
   async function handlePickImage() {
     const options = {
@@ -65,32 +64,30 @@ const ReceiptSettingsScreen = ({ navigation }) => {
   //     })
   // }, [])
 
-  const [receiptSettings, setReceiptSettings] = useState({});
+  // const [receiptSettings, setReceiptSettings] = useState({});
 
-  const loginData = JSON.parse(loginStorage.getString("login-data"));
-
-  const getReceiptSettings = async () => {
-    await axios
-      .post(
-        ADDRESSES.RECEIPT_SETTINGS,
-        {},
-        {
-          headers: {
-            Authorization: loginData.token,
-          },
-        },
-      )
-      .then(res => {
-        setReceiptSettings(res.data.data.msg[0]);
-      })
-      .catch(err => {
-        console.log("CATCH - getReceiptSettings", err);
-      });
-  };
+  // const getReceiptSettings = async () => {
+  //   const loginData = JSON.parse(loginStorage.getString("login-data"));
+  //   await axios
+  //     .post(
+  //       ADDRESSES.RECEIPT_SETTINGS,
+  //       {},
+  //       {
+  //         headers: {
+  //           Authorization: loginData.token,
+  //         },
+  //       },
+  //     )
+  //     .then(res => {
+  //       setReceiptSettings(res.data.data.msg[0]);
+  //     })
+  //     .catch(err => {
+  //       console.log("CATCH - getReceiptSettings", err);
+  //     });
+  // };
 
   useEffect(() => {
-    const rcptSettings = getReceiptSettings();
-    return () => clearInterval(rcptSettings);
+    getReceiptSettings();
   }, []);
 
   return (

@@ -89,14 +89,15 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     flexWrap: "wrap",
     padding: PixelRatio.roundToNearestPixel(10),
   },
   ActionBox_style: {
-    alignSelf: "flex-start",
+    maxWidth: "48%",
+    maxHeight: "45%",
     width: "48%",
-    height: height / 5,
+
     paddingVertical: PixelRatio.roundToNearestPixel(10),
   },
 });

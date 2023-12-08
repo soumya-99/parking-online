@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
   });
   const [rateDetailsList, setRateDetailsList] = useState(() => []);
   const [gstList, setGstList] = useState({});
+  const [receiptSettings, setReceiptSettings] = useState({});
   const [detailedReports, setDetailedReports] = useState(() => []);
   const [shiftwiseReports, setShiftwiseReports] = useState(() => []);
   const [vehicleWiseReports, setVehicleWiseReports] = useState(() => []);
@@ -63,12 +64,13 @@ export const AuthProvider = ({ children }) => {
             console.log("=====================", res.data.data);
             setIsLogin(!isLogin);
           } else {
-            ToastAndroid.showWithGravityAndOffset(
-              "Invalid Credentials",
-              ToastAndroid.SHORT,
-              ToastAndroid.CENTER,
-            );
-            console.log("Error login Axios");
+            // ToastAndroid.showWithGravityAndOffset(
+            //   "Invalid Credentials",
+            //   ToastAndroid.SHORT,
+            //   ToastAndroid.CENTER,
+            // );
+            alert("Invalid Credentials");
+            console.log("Error login Axios", res.data.message);
           }
         })
         .catch(err => {
@@ -150,6 +152,26 @@ export const AuthProvider = ({ children }) => {
       })
       .catch(err => {
         console.log("ERR - getGstList - AuthProvider", err);
+      });
+  };
+
+  const getReceiptSettings = async () => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.RECEIPT_SETTINGS,
+        {},
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        setReceiptSettings(res.data.data.msg[0]);
+      })
+      .catch(err => {
+        console.log("CATCH - getReceiptSettings", err);
       });
   };
 
@@ -284,11 +306,31 @@ export const AuthProvider = ({ children }) => {
       });
   };
 
-  const logout = () => {
-    loginStorage.clearAll();
-    appStorage.clearAll();
+  const changePassword = async (password, confirmPassword) => {
+    const loginData = JSON.parse(loginStorage.getString("login-data"));
+    await axios
+      .post(
+        ADDRESSES.CHANGE_PASSWORD,
+        {
+          password: password,
+          confirm_password: confirmPassword,
+        },
+        {
+          headers: {
+            Authorization: loginData.token,
+          },
+        },
+      )
+      .then(res => {
+        console.log("Password changed successfully.");
+      });
+  };
 
-    setGeneralSettings({});
+  const logout = () => {
+    // loginStorage.clearAll();
+    // appStorage.clearAll();
+
+    clearStates([setGeneralSettings, setReceiptSettings], {});
     clearStates(
       [
         setGstList,
@@ -302,6 +344,8 @@ export const AuthProvider = ({ children }) => {
 
     setIsLogin(!isLogin);
     console.log("LOGGING OUT...");
+    loginStorage.clearAll();
+    appStorage.clearAll();
   };
 
   return (
@@ -317,6 +361,8 @@ export const AuthProvider = ({ children }) => {
         // getRateDetailsList,
         gstList,
         getGstList,
+        receiptSettings,
+        getReceiptSettings,
         carIn,
         getDetailedReport,
         detailedReports,
@@ -326,6 +372,7 @@ export const AuthProvider = ({ children }) => {
         getVehicleWiseReport,
         operatorwiseReports,
         getOperatorwiseReport,
+        changePassword,
       }}>
       {children}
     </AuthContext.Provider>
