@@ -10,8 +10,9 @@ import {
   NativeModules,
   PermissionsAndroid,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
-import BleManager from 'react-native-ble-manager';
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import BleManager from "react-native-ble-manager";
+import ThermalPrinterModule from "react-native-thermal-printer";
 
 import CustomHeader from "../../components/CustomHeader";
 import styles from "../../styles/styles";
@@ -22,8 +23,10 @@ import { ADDRESSES } from "../../routes/addresses";
 import { loginStorage } from "../../storage/appStorage";
 import { AuthContext } from "../../context/AuthProvider";
 
+import headerImg from "../../resources/logo/sss-logo.png";
+
 export default function ReceiptScreen({ navigation }) {
-  const {greet} = NativeModules.MyPrinter;
+  const { greet } = NativeModules.MyPrinter;
 
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -38,6 +41,7 @@ export default function ReceiptScreen({ navigation }) {
     getRateDetailsList,
     getGstList,
     getGeneralSettings,
+    getReceiptSettings
   } = useContext(AuthContext);
 
   const { dev_mod } = generalSettings;
@@ -97,8 +101,6 @@ export default function ReceiptScreen({ navigation }) {
     //   return;
     // }
 
-    let headerPayload = "OPERATOR WISE REPORT\n";
-
     // MyNativeModule.printHeader(headerPayload, 24, (err, msg) => {
     //   if (err) {
     //     console.error(err);
@@ -106,12 +108,34 @@ export default function ReceiptScreen({ navigation }) {
     //   console.warn(msg);
     // });
 
-    greet("Hello there, ", (err, msg) => {
-        if (err) {
-          console.error(err);
-        }
-        console.warn(msg);
+    // greet("Hello there, ", (err, msg) => {
+    //     if (err) {
+    //       console.error(err);
+    //     }
+    //     console.warn(msg);
+    //   });
+
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload:
+          `[C]<u><font size='tall'>Synergic Parking</font></u>\n` +
+          // `[C]<img>${headerImg}</img>\n` +
+          // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
+          // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
+          `[C]---------------------------\n` +
+          `[L]<font size='normal'>NAME : ${userDetails.operator_name}</font>\n` +
+          `[L]<font size='normal'>PHONE No. : ${userDetails.mobile_no}</font>\n` +
+          `[L]<font size='normal'>LOCATION : ${userDetails.seller_addr}</font>\n` +
+          `[L]<font size='normal'>SERIAL No. : ${userDetails.user_id}</font>`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
       });
+    } catch (err) {
+      ToastAndroid.show("ThermalPrinterModule - ReceiptScreen", ToastAndroid.SHORT);
+      console.log(err.message);
+    }
   };
 
   const getVehicles = async () => {
@@ -133,16 +157,17 @@ export default function ReceiptScreen({ navigation }) {
       });
   };
 
-  useEffect(() => {
+  useMemo(() => {
     console.log("Effect - getVehicles Called - ReceiptScreen");
     getVehicles();
   }, []);
 
-  useEffect(() => {
+  useMemo(() => {
     console.log(
-      "Effect - getGeneralSettings, getRateDetailsList Called - ReceiptScreen",
+      "Effect - getGeneralSettings, getReceiptSettings Called - ReceiptScreen",
     );
     getGeneralSettings();
+    getReceiptSettings();
   }, []);
 
   const handleNavigation = async props => {

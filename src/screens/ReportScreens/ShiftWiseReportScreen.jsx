@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import ThermalPrinterModule from "react-native-thermal-printer";
 import axios from "axios";
 
 import CustomButton from "../../components/CustomButton";
@@ -23,9 +24,10 @@ import icons from "../../resources/icons/icons";
 const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
+import { fixedString } from "../../utils/fixedString";
 
 export default function ShiftWiseReportScreen({ navigation }) {
-  const { shiftwiseReports, getShiftwiseReport } = useContext(AuthContext);
+  const { shiftwiseReports, getShiftwiseReport, receiptSettings } = useContext(AuthContext);
 
   // State for manage the  total price
   const [totalPrice, setTotalPrice] = useState(0);
@@ -84,6 +86,58 @@ export default function ShiftWiseReportScreen({ navigation }) {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     getShiftwiseReport(formattedDateFrom, formattedDateTo);
+  };
+
+  const handlePrint = async () => {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+
+    shiftwiseReports.map((item, index) => {
+        payloadBody += `\n[L]<font>${fixedString(item.shift_name.toString(), 5)}[C]${fixedString(item.operator_name.toString(), 6)}[R]${fixedString(item.quantity.toString(), 4)}</font>`
+    });
+
+    payloadHeader += 
+    `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header2}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header3}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+
+    payloadFooter += 
+    `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer2}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer3}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload:
+          `[C]${payloadHeader}\n` +
+          `[C]<u><font size='small'>Shift Wise Report</font></u>\n` +
+          `[C]--------------------------------\n` +
+          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+          `[C]--------------------------------\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>Shift   Op. Name   Quantity</font>\n` +
+          `[C]--------------------------------` +
+          `[C]${payloadBody}\n` +
+          `[C]--------------------------------\n` +
+          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+          `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      });
+    } catch (err) {
+      ToastAndroid.show(
+        "ThermalPrinterModule - ShiftWiseReportScreen",
+        ToastAndroid.SHORT,
+      );
+      console.log(err.message);
+    }
   };
 
   return (
@@ -237,7 +291,7 @@ export default function ShiftWiseReportScreen({ navigation }) {
             <CustomButton.GoButton
               title="Print Report"
               style={{ flex: 1, marginLeft: 10 }}
-              onAction={() => console.log("handleUnbilledPrint()")}
+              onAction={() => handlePrint()}
             />
           )}
         </View>

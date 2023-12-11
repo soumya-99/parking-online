@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import ThermalPrinterModule from "react-native-thermal-printer";
 import axios from "axios";
 
 import CustomButton from "../../components/CustomButton";
@@ -23,9 +24,12 @@ import icons from "../../resources/icons/icons";
 const width = Dimensions.get("screen").width;
 import DeviceInfo from "react-native-device-info";
 import { AuthContext } from "../../context/AuthProvider";
+import { fixedString } from "../../utils/fixedString";
 
 export default function VehicleWiseFixedReportScreen({ navigation }) {
-  const { vehicleWiseReports, getVehicleWiseReport } = useContext(AuthContext);
+  const { vehicleWiseReports, getVehicleWiseReport, receiptSettings } = useContext(AuthContext);
+
+  // const [vehicleReport, setVehicleReport] = useState([])
 
   const [detailedReportData, setDetailedReportData] = useState([]);
   // State for manage the  loading values
@@ -74,12 +78,80 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
   // }, [mydateFrom, mydateTo]);
 
   let totalAmount = 0;
-  let totalAdvanceAmount = 0
+  let totalAdvanceAmount = 0;
 
   const submitDetails = () => {
     let formattedDateFrom = mydateFrom.toISOString().slice(0, 10);
     let formattedDateTo = mydateTo.toISOString().slice(0, 10);
     getVehicleWiseReport(formattedDateFrom, formattedDateTo);
+    // setVehicleReport(vehicleWiseReports)
+  };
+
+  const handlePrint = async () => {
+    let payloadHeader = "";
+    let payloadBody = "";
+    let payloadFooter = "";
+
+    vehicleWiseReports.map((item, index) => {
+        payloadBody += `\n[L]<font>${fixedString(item.vehicle_name.toString(), 4)}[C]${fixedString(item.vehicle_count.toString(), 3)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.paid_amt.toString(), 4)}</font>`
+    });
+
+    
+
+    payloadHeader += 
+    `\n[C]<font size='tall'>${receiptSettings.header1}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header2}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header3}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.header4}</font>\n`;
+
+    payloadFooter += 
+    `\n[C]<font size='small'>${receiptSettings.footer1}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer2}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer3}</font>\n` +
+    `[C]<font size='small'>${receiptSettings.footer4}</font>\n`;
+
+    try {
+      await ThermalPrinterModule.printBluetooth({
+        payload:
+          `[C]${payloadHeader}\n` +
+          `[C]<u><font size='small'>Vehicle Wise Report</font></u>\n` +
+          `[C]--------------------------------\n` +
+          `[L]<font>From: ${mydateFrom.toLocaleDateString("en-GB")}</font>[R]<font>To: ${mydateTo.toLocaleDateString("en-GB")}</font>\n` +
+          `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
+          `[C]--------------------------------\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>Veh.   Count   Advance   Amount</font>\n` +
+          `[C]--------------------------------` +
+          `[C]${payloadBody}\n` +
+          `[C]--------------------------------\n` +
+          `[C]<font size='normal'>ADVANCE: ${totalAdvanceAmount}   AMT: ${totalAmount}</font>\n` +
+          `[C]--------------------------------\n` +
+          // "[C]<barcode type='ean13' height='10'>831254784551</barcode>\n" +
+          // "[C]<qrcode size='20'>http://www.developpeur-web.dantsu.com/</qrcode>\n" +
+          `[C]${payloadFooter}\n`,
+        printerNbrCharactersPerLine: 30,
+        printerDpi: 120,
+        printerWidthMM: 58,
+        mmFeedPaper: 25,
+      });
+      // vehicleWiseReports.map(async (item, index) => {
+      //   await ThermalPrinterModule.printBluetooth({
+      //     payload:
+      //     `[C]${item.vehicle_name}  ${item.vehicle_count}   ${item.adv_amt}  ${item.paid_amt}\n`,
+
+      //   printerNbrCharactersPerLine: 30,
+      //   printerDpi: 120,
+      //   printerWidthMM: 58,
+      //   mmFeedPaper: 25,
+      //   })
+      // })
+    } catch (err) {
+      ToastAndroid.show(
+        "ThermalPrinterModule - VehicleWiseFixedReportScreen",
+        ToastAndroid.SHORT,
+      );
+      console.log(err.message);
+    }
   };
 
   return (
@@ -155,18 +227,12 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
             <ScrollView>
               <View style={styles.container}>
                 <View style={[styles.row, styles.header]}>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Veh.
-                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Veh.</Text>
                   <Text style={[styles.headerText, styles.hcell]}>Count</Text>
                   {/* <Text style={[styles.headerText, styles.hcell]}>In time</Text> */}
 
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Advance
-                  </Text>
-                  <Text style={[styles.headerText, styles.hcell]}>
-                    Amount
-                  </Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Advance</Text>
+                  <Text style={[styles.headerText, styles.hcell]}>Amount</Text>
                 </View>
                 {vehicleWiseReports &&
                   vehicleWiseReports.map((item, index) => {
@@ -196,9 +262,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
                       ...styles.row,
                       backgroundColor: colors["primary-color"],
                     }}>
-                    <Text style={[styles.cell, styles.hcell]}>
-                      Total
-                    </Text>
+                    <Text style={[styles.cell, styles.hcell]}>Total</Text>
                     <Text style={[styles.cell, styles.hcell]}></Text>
                     {/* <Text style={[styles.cell, styles.hcell]}>
                       Total Advance
@@ -246,7 +310,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
             <CustomButton.GoButton
               title="Print Report"
               style={{ flex: 1, marginLeft: 10 }}
-              onAction={() => console.log("handleUnbilledPrint()")}
+              onAction={() => handlePrint()}
             />
           )}
         </View>
