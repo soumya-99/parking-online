@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import BleManager from "react-native-ble-manager";
 import ThermalPrinterModule from "react-native-thermal-printer";
 import axios from "axios";
 
@@ -88,13 +89,47 @@ export default function ShiftWiseReportScreen({ navigation }) {
     getShiftwiseReport(formattedDateFrom, formattedDateTo);
   };
 
+  async function checkLocationEnabled() {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: "Bluetooth Permission",
+          message:
+            "This app needs access to your location to check Bluetooth status.",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK",
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        BleManager.enableBluetooth()
+          .then(() => {
+            console.log("The bluetooth is already enabled or the user confirm");
+          })
+          .catch(error => {
+            // Failure code
+            console.log("The user refuse to enable bluetooth");
+          });
+        // const isEnabled = await BluetoothStatus.isEnabled();
+        // console.log('Bluetooth Enabled:', isEnabled);
+      } else {
+        console.log("Bluetooth permission denied");
+      }
+    } catch (error) {
+      console.log("Error checking Bluetooth status:", error);
+    }
+  }
+
   const handlePrint = async () => {
+    await checkLocationEnabled();
+    
     let payloadHeader = "";
     let payloadBody = "";
     let payloadFooter = "";
 
     shiftwiseReports.map((item, index) => {
-        payloadBody += `\n[L]<font>${fixedString(item.shift_name.toString(), 5)}[C]${fixedString(item.operator_name.toString(), 6)}[R]${fixedString(item.quantity.toString(), 4)}</font>`
+        payloadBody += `\n[L]<font>${fixedString(item.shift_name.toString(), 6)}[C]${fixedString(item.operator_name.toString(), 10)}[R]${fixedString(item.quantity.toString(), 6)}</font>`
     });
 
     payloadHeader += 

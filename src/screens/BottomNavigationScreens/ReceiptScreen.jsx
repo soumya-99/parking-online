@@ -7,7 +7,6 @@ import {
   PixelRatio,
   ScrollView,
   ToastAndroid,
-  NativeModules,
   PermissionsAndroid,
 } from "react-native";
 import React, { useContext, useEffect, useMemo, useState } from "react";
@@ -26,8 +25,6 @@ import { AuthContext } from "../../context/AuthProvider";
 import headerImg from "../../resources/logo/sss-logo.png";
 
 export default function ReceiptScreen({ navigation }) {
-  const { greet } = NativeModules.MyPrinter;
-
   const loginData = JSON.parse(loginStorage.getString("login-data"));
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -55,8 +52,7 @@ export default function ReceiptScreen({ navigation }) {
 
   const [vehicles, setVehicles] = useState(() => []);
 
-  const [isBlueToothEnable, setIsBlueToothEnable] = useState(false);
-  async function checkBluetoothEnabled() {
+  async function checkLocationEnabled() {
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -72,8 +68,6 @@ export default function ReceiptScreen({ navigation }) {
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         BleManager.enableBluetooth()
           .then(() => {
-            // Success code
-            setIsBlueToothEnable(true);
             console.log("The bluetooth is already enabled or the user confirm");
           })
           .catch(error => {
@@ -91,29 +85,7 @@ export default function ReceiptScreen({ navigation }) {
   }
 
   const handlePrint = async () => {
-    // await checkBluetoothEnabled();
-
-    // if (!isBlueToothEnable) {
-    //   ToastAndroid.show(
-    //     "Please enable the bluetooth first.",
-    //     ToastAndroid.SHORT,
-    //   );
-    //   return;
-    // }
-
-    // MyNativeModule.printHeader(headerPayload, 24, (err, msg) => {
-    //   if (err) {
-    //     console.error(err);
-    //   }
-    //   console.warn(msg);
-    // });
-
-    // greet("Hello there, ", (err, msg) => {
-    //     if (err) {
-    //       console.error(err);
-    //     }
-    //     console.warn(msg);
-    //   });
+    await checkLocationEnabled();
 
     try {
       await ThermalPrinterModule.printBluetooth({
@@ -122,11 +94,11 @@ export default function ReceiptScreen({ navigation }) {
           // `[C]<img>${headerImg}</img>\n` +
           // `[C]<img>https://avatars.githubusercontent.com/u/59480692?v=4</img>\n` +
           // `[C]<img>https://synergicportal.in/syn_header.png</img>\n` +
-          `[C]---------------------------\n` +
-          `[L]<font size='normal'>NAME : ${userDetails.operator_name}</font>\n` +
-          `[L]<font size='normal'>PHONE No. : ${userDetails.mobile_no}</font>\n` +
-          `[L]<font size='normal'>LOCATION : ${userDetails.seller_addr}</font>\n` +
-          `[L]<font size='normal'>SERIAL No. : ${userDetails.user_id}</font>`,
+          `[C]-------------------------------\n` +
+          `[L]<font size='normal'>NAME : [R]${userDetails.operator_name}</font>\n` +
+          `[L]<font size='normal'>PHONE No. : [R]${userDetails.mobile_no}</font>\n` +
+          `[L]<font size='normal'>LOCATION : [R]${userDetails.seller_addr}</font>\n` +
+          `[L]<font size='normal'>SERIAL No. : [R]${userDetails.user_id}</font>`,
         printerNbrCharactersPerLine: 30,
         printerDpi: 120,
         printerWidthMM: 58,

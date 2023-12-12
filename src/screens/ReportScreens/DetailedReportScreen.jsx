@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import BleManager from "react-native-ble-manager";
 import axios from "axios";
 
 import CustomButton from "../../components/CustomButton";

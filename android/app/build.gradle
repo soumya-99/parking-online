@@ -1,7 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 
-import com.android.build.OutputFile
+// import com.android.build.OutputFile
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -75,10 +75,10 @@ def jscFlavor = 'org.webkit:android-jsc:+'
  * This reads the value from reactNativeArchitectures in your gradle.properties
  * file and works together with the --active-arch-only flag of react-native run-android.
  */
-def reactNativeArchitectures() {
-    def value = project.getProperties().get("reactNativeArchitectures")
-    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
-}
+// def reactNativeArchitectures() {
+//     def value = project.getProperties().get("reactNativeArchitectures")
+//     return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+// }
 
 android {
     ndkVersion rootProject.ext.ndkVersion
@@ -94,14 +94,14 @@ android {
         versionName "1.1"
         missingDimensionStrategy 'react-native-camera', 'general'
     }
-    splits {
-        abi {
-            reset()
-            enable true  // Enable the splits
-            universalApk false  // If true, also generate a universal APK
-            include (*reactNativeArchitectures())
-        }
-    }
+    // splits {
+    //     abi {
+    //         reset()
+    //         enable true  // Enable the splits
+    //         universalApk false  // If true, also generate a universal APK
+    //         include (*reactNativeArchitectures())
+    //     }
+    // }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -140,12 +140,12 @@ dependencies {
         implementation jscFlavor
     }
 
-    implementation fileTree(dir: 'libs', include: ['*.jar', '*.so'])
-    implementation files('libs/android-async-http-1.4.4.jar')
-    implementation files('libs/itext5-itextpdf-5.5.12.jar')
-    implementation files('libs/classes.jar')
-    implementation files('libs/odm.jar')
-    implementation files('libs/SmartPos_1.4.0_R210715.jar')
+    // implementation fileTree(dir: 'libs', include: ['*.jar', '*.so'])
+    // implementation files('libs/android-async-http-1.4.4.jar')
+    // implementation files('libs/itext5-itextpdf-5.5.12.jar')
+    // implementation files('libs/classes.jar')
+    // implementation files('libs/odm.jar')
+    // implementation files('libs/SmartPos_1.4.0_R210715.jar')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
