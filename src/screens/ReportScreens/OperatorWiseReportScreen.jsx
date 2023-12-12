@@ -153,7 +153,7 @@ export default function OperatorWiseReportScreen({ navigation }) {
           `[C]Report On: ${new Date().toLocaleString("en-GB")}\n` +
           `[C]--------------------------------\n` +
           `[C]--------------------------------\n` +
-          `[C]<font size='normal'>Veh.   Count   Advance   Amount</font>\n` +
+          `[C]<font size='normal'>Name.   Count   Advance   Amount</font>\n` +
           `[C]--------------------------------` +
           `[C]${payloadBody}\n` +
           `[C]--------------------------------\n` +

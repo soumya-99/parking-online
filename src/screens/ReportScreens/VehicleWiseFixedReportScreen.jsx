@@ -128,7 +128,7 @@ export default function VehicleWiseFixedReportScreen({ navigation }) {
     let payloadFooter = "";
 
     vehicleWiseReports.map((item, index) => {
-        payloadBody += `\n[L]<font>${fixedString(item.vehicle_name.toString(), 4)}[C]${fixedString(item.vehicle_count.toString(), 3)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.paid_amt.toString(), 4)}</font>`
+        payloadBody += `\n[L]<font>${fixedString(item.vehicle_name.toString(), 5)}[C]${fixedString(item.vehicle_count.toString(), 4)}    ${fixedString(item.adv_amt.toString(),4)}[R]${fixedString(item.paid_amt.toString(), 4)}</font>`
     });
 
     
